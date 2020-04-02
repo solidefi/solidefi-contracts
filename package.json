@@ -1,0 +1,30 @@
+{
+  "name": "monoblocdefi",
+  "version": "1.0.0",
+  "description": "",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/surbhiaudichya/defiMonobloc.git"
+  },
+  "author": "surbhi",
+  "license": "ISC",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "dotenv": "^6.2.0",
+    "openzeppelin-solidity": "2.1.3",
+    "openzeppelin-test-helpers": "^0.4.2",
+    "solc": "^0.5.0",
+    "truffle-hdwallet-provider": "^1.0.2",
+    "truffle-plugin-verify": "^0.3.3"
+  }
+}
