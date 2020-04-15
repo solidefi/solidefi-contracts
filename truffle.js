@@ -4,7 +4,7 @@
 const HDWalletProvider = require('truffle-hdwallet-provider');
 
 const mnemonic = process.env.ETHEREUM_ACCOUNT_MNEMONIC;
-//const mnemonic = "slab evolve modify high wife cactus february quarter brand lava attack ";
+
 
 module.exports = {
     api_keys: {
@@ -23,7 +23,7 @@ module.exports = {
         },
         kovan: {
             provider: function () {
-                return new HDWalletProvider(mnemonic, 'https://kovan.infura.io/v3/', 0, 15);
+                return new HDWalletProvider(mnemonic, 'https://kovan.infura.io/v3/11b9a3581295441e896cacb35648a96', 0, 15);
             },
             network_id: '42',
             gasPrice: 3000000000,

@@ -13,8 +13,8 @@ import "./dydx/ISoloMargin.sol";
 //import "./dsr/DSRSavingsProtocol.sol";
 
 contract SavingsProxy is ConstantAddresses {
-    address public constant SAVINGS_COMPOUND_ADDRESS = 0x752b38038e32004b3BC809BA57785841D107627D;
-    address public constant SAVINGS_DYDX_ADDRESS = 0x67D7e095A621E42bC0723e2cF99BC7E82525b7A3;
+    address public constant SAVINGS_COMPOUND_ADDRESS = 0x15E9Fd390e0619dEf294d4C23DbAc69608203DB6;
+    address public constant SAVINGS_DYDX_ADDRESS = 0x0A103DB1C6e91edE7cD20D83f2a6D7960E587a9F;
 
     enum SavingsProtocol {Compound, Dydx, Fulcrum, Dsr}
 
@@ -39,9 +39,9 @@ contract SavingsProxy is ConstantAddresses {
     }
 
     function withdrawDai() public {
-        ERC20(DAI_ADDRESS).transfer(
+        ERC20(SAI_ADDRESS).transfer(
             msg.sender,
-            ERC20(DAI_ADDRESS).balanceOf(address(this))
+            ERC20(SAI_ADDRESS).balanceOf(address(this))
         );
     }
 
@@ -65,7 +65,7 @@ contract SavingsProxy is ConstantAddresses {
         bool _fromUser
     ) internal {
         if (_fromUser) {
-            ERC20(DAI_ADDRESS).transferFrom(msg.sender, address(this), _amount);
+            ERC20(SAI_ADDRESS).transferFrom(msg.sender, address(this), _amount);
         }
 
         approveDeposit(_protocol);
@@ -107,7 +107,7 @@ contract SavingsProxy is ConstantAddresses {
         }
 
         if (_protocol == SavingsProtocol.Dydx) {
-            ERC20(DAI_ADDRESS).approve(SOLO_MARGIN_ADDRESS, uint256(-1));
+            ERC20(SAI_ADDRESS).approve(SOLO_MARGIN_ADDRESS, uint256(-1));
             setDydxOperator(true);
         }
     }

@@ -12,7 +12,7 @@ contract DydxSavingsProtocol is ProtocolInterface, ConstantAddresses, DSAuth {
     ISoloMargin public soloMargin;
     address public savingsProxy;
 
-    uint256 daiMarketId = 3;
+    uint256 daiMarketId = 1;
 
     constructor() public {
         soloMargin = ISoloMargin(SOLO_MARGIN_ADDRESS);
