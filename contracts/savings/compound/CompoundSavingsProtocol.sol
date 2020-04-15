@@ -7,75 +7,63 @@ import "../../compound/Exponential.sol";
 import "../../compound/StupidExchange.sol";
 import "../../interfaces/ERC20.sol";
 import "../../constants/ConstantAddresses.sol";
+import "../../DS/DSAuth.sol";
 
 
 contract CompoundSavingsProtocol is
     ProtocolInterface,
     Exponential,
-    ConstantAddresses
+    ConstantAddresses,
+    DSAuth
 {
     CTokenInterface public cDaiContract;
     address public savingsProxy;
 
     constructor() public {
-        cDaiContract = CTokenInterface(CDAI_ADDRESS);
+        cDaiContract = CTokenInterface(NEW_CDAI_ADDRESS);
     }
 
-    // function addSavingsProxy(address _savingsProxy) public auth {
-    //     savingsProxy = _savingsProxy;
-    // }
+    function addSavingsProxy(address _savingsProxy) public auth {
+        savingsProxy = _savingsProxy;
+    }
 
     function deposit(address _user, uint256 _amount) public {
         require(msg.sender == _user);
         // get dai from user
-        // require(
-        //     ERC20(COMPOUND_DAI_ADDRESS).transferFrom(
-        //         _user,
-        //         address(this),
-        //         _amount
-        //     )
-        // );
-        // REMOVE: USED ONLY ON KOVAN TO HANDLE DAI DIFFERENT TOKENS
-        //StupidExchange(STUPID_EXCHANGE).getCompoundDaiToken(_amount);
-        // approve dai to compound
-        ERC20(COMPOUND_DAI_ADDRESS).approve(CDAI_ADDRESS, uint256(-1));
+        require(ERC20(DAI_ADDRESS).transferFrom(_user, address(this), _amount));
 
         // mainnet only
-        // ERC20(MAKER_DAI_ADDRESS).approve(CDAI_ADDRESS, uint256(-1));
+        ERC20(DAI_ADDRESS).approve(NEW_CDAI_ADDRESS, uint256(-1));
 
         // mint cDai
-        //require(cDaiContract.mint(_amount) == 0);
-        cDaiContract.mint(_amount);
+        require(cDaiContract.mint(_amount) == 0, "Failed Mint");
         // balance should be equal to cDai minted
         uint256 cDaiMinted = cDaiContract.balanceOf(address(this));
         // return cDai to user
-        ERC20(CDAI_ADDRESS).transfer(_user, cDaiMinted);
+        cDaiContract.transfer(_user, cDaiMinted);
     }
 
     function withdraw(address _user, uint256 _amount) public {
         require(msg.sender == _user);
         // transfer all users balance to this contract
-        // require(
-        //     ERC20(CDAI_ADDRESS).transferFrom(
-        //         _user,
-        //         address(this),
-        //         ERC20(CDAI_ADDRESS).balanceOf(_user)
-        //     )
-        // );
+        require(
+            cDaiContract.transferFrom(
+                _user,
+                address(this),
+                ERC20(NEW_CDAI_ADDRESS).balanceOf(_user)
+            )
+        );
         // approve cDai to compound contract
-        ERC20(CDAI_ADDRESS).approve(address(cDaiContract), uint256(-1));
+        cDaiContract.approve(NEW_CDAI_ADDRESS, uint256(-1));
         // get dai from cDai contract
-        //require(cDaiContract.redeemUnderlying(_amount) == 0, "Reedem Failed");
-        cDaiContract.redeemUnderlying(_amount);
-        // REMOVE: USED ONLY ON KOVAN TO HANDLE DAI DIFFERENT TOKENS
-        //StupidExchange(STUPID_EXCHANGE).getMakerDaiToken(_amount);
+        require(cDaiContract.redeemUnderlying(_amount) == 0, "Reedem Failed");
 
         // return to user balance we didn't spend
-        uint256 cDaiBalance = ERC20(CDAI_ADDRESS).balanceOf(address(this));
+        uint256 cDaiBalance = cDaiContract.balanceOf(address(this));
         if (cDaiBalance > 0) {
-            ERC20(CDAI_ADDRESS).transfer(_user, cDaiBalance);
+            cDaiContract.transfer(_user, cDaiBalance);
         }
         // return dai we have to user
-        ERC20(COMPOUND_DAI_ADDRESS).transfer(_user, _amount);
+        ERC20(DAI_ADDRESS).transfer(_user, _amount);
     }
 }

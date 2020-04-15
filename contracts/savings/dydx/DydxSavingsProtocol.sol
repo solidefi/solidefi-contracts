@@ -5,28 +5,26 @@ import "../ProtocolInterface.sol";
 import "./ISoloMargin.sol";
 import "../../interfaces/ERC20.sol";
 import "../../constants/ConstantAddresses.sol";
+import "../../DS/DSAuth.sol";
 
 
-//import "../../DS/DSAuth.sol";
-
-contract DydxSavingsProtocol is ProtocolInterface, ConstantAddresses {
+contract DydxSavingsProtocol is ProtocolInterface, ConstantAddresses, DSAuth {
     ISoloMargin public soloMargin;
-    ERC20 public dai;
-    //address public savingsProxy;
+    address public savingsProxy;
 
-    uint256 daiMarketId = 1;
+    uint256 daiMarketId = 3;
 
     constructor() public {
         soloMargin = ISoloMargin(SOLO_MARGIN_ADDRESS);
-        dai = ERC20(MAKER_DAI_ADDRESS);
     }
 
-    // function addSavingsProxy(address _savingsProxy) public auth {
-    //     savingsProxy = _savingsProxy;
-    // }
+    function addSavingsProxy(address _savingsProxy) public auth {
+        savingsProxy = _savingsProxy;
+    }
 
     function deposit(address _user, uint256 _amount) public {
-        require(msg.sender == _user, "not same");
+        require(msg.sender == _user);
+
         Account.Info[] memory accounts = new Account.Info[](1);
         accounts[0] = getAccount(_user, 0);
 
