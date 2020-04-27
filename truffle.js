@@ -1,17 +1,17 @@
-//const path = require("path");
+const path = require("path");
 
-//const dotenv           = require('dotenv').config();
+const dotenv = require('dotenv').config();
 const HDWalletProvider = require('truffle-hdwallet-provider');
 
 const mnemonic = process.env.ETHEREUM_ACCOUNT_MNEMONIC;
 
-
 module.exports = {
     api_keys: {
-        // etherscan: process.env.ETHERSCAN_API_KEY
+        etherscan: process.env.ETHERSCAN_API_KEY
     },
     plugins: [
-        'truffle-plugin-verify'
+        'truffle-plugin-verify',
+        '@chainsafe/truffle-plugin-abigen'
     ],
     networks: {
         mainnet: {
@@ -19,43 +19,28 @@ module.exports = {
                 return new HDWalletProvider(mnemonic, process.env.INFURA_ENDPOINT);
             },
             network_id: '1',
-            gasPrice: 8000000000, // 5 gwei
+            gasPrice: 8100000000, // 8.1 gwei
+            skipDryRun: true,
         },
         kovan: {
             provider: function () {
-                return new HDWalletProvider(mnemonic, 'https://kovan.infura.io/v3/11b9a3581295441e896cacb35648a96', 0, 15);
+                return new HDWalletProvider(mnemonic, process.env.KOVAN_INFURA_ENDPOINT, 0, 15);
             },
             network_id: '42',
+            gas: 8000000,
             gasPrice: 3000000000,
-            confirmations: 2,
-            skipDryRun: true
+            // skipDryRun: true,
         },
-        rinkeby: {
-            provider: function () {
-                return new HDWalletProvider(mnemonic, process.env.RINKEBY_INFURA_ENDPOINT, 0, 10);
-            },
-            network_id: '4',
-        },
-        test: {
-            provider: function () {
-                return new HDWalletProvider(mnemonic, 'http://127.0.0.1:8545/');
-            },
-            network_id: '*',
-        },
-        development: {
-            host: "127.0.0.1",     // Localhost (default: none)
-            port: 8545,            // Standard Ethereum port (default: none)
-            network_id: "*",       // Any network (default: none)
-        },
-        dydx: {
-            host: "127.0.0.1",     // Localhost (default: none)
-            port: 8445,            // Standard Ethereum port (default: none)
-            network_id: "1001",       // Any network (default: none)
-        }
     },
     compilers: {
         solc: {
             version: "0.5.7",
+            settings: {
+                optimizer: {
+                    enabled: true,
+                    runs: 20000
+                },
+            }
         }
-    },
+    }
 }

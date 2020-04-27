@@ -10,13 +10,11 @@ import "./dydx/ISoloMargin.sol";
 
 //import "./SavingsLogger.sol";
 
-//import "./dsr/DSRSavingsProtocol.sol";
-
-contract SavingsProxy is ConstantAddresses {
-    address public constant SAVINGS_COMPOUND_ADDRESS = 0x15E9Fd390e0619dEf294d4C23DbAc69608203DB6;
-    address public constant SAVINGS_DYDX_ADDRESS = 0x0A103DB1C6e91edE7cD20D83f2a6D7960E587a9F;
-
-    enum SavingsProtocol {Compound, Dydx, Fulcrum, Dsr}
+contract ProtocolProxy is ConstantAddresses {
+    address public constant COMPOUND_ADDRESS = 0x51b599C3572A4DD2A896F36b5914F0bFb012BC58;
+    address public constant DYDX_ADDRESS = 0x06bE8ff02421443332A38eDcf72c9d11F5b53426;
+    address public constant AAVE_ADDRESS = 0xf0B437Cd232041cE2B9912e86b5bEB64EE205F30;
+    enum SavingsProtocol {Compound, Dydx, Aave}
 
     function deposit(SavingsProtocol _protocol, uint256 _amount) public {
         _deposit(_protocol, _amount, true);
@@ -51,11 +49,15 @@ contract SavingsProxy is ConstantAddresses {
         returns (address)
     {
         if (_protocol == SavingsProtocol.Compound) {
-            return SAVINGS_COMPOUND_ADDRESS;
+            return COMPOUND_ADDRESS;
         }
 
         if (_protocol == SavingsProtocol.Dydx) {
-            return SAVINGS_DYDX_ADDRESS;
+            return DYDX_ADDRESS;
+        }
+
+        if (_protocol == SavingsProtocol.Aave) {
+            return AAVE_ADDRESS;
         }
     }
 
@@ -64,10 +66,38 @@ contract SavingsProxy is ConstantAddresses {
         uint256 _amount,
         bool _fromUser
     ) internal {
-        if (_fromUser) {
-            ERC20(SAI_ADDRESS).transferFrom(msg.sender, address(this), _amount);
-        }
+        // kovan compound DAI_ADDRESS
+        // kovan dydx SAI_ADDRESS
+        // kovan Aave AAVE_DAI_ADDRESS
 
+        // just for testing on kovan due to diff dai address extra check
+        if (_protocol == SavingsProtocol.Compound) {
+            if (_fromUser) {
+                ERC20(DAI_ADDRESS).transferFrom(
+                    msg.sender,
+                    address(this),
+                    _amount
+                );
+            }
+        }
+        if (_protocol == SavingsProtocol.Dydx) {
+            if (_fromUser) {
+                ERC20(SAI_ADDRESS).transferFrom(
+                    msg.sender,
+                    address(this),
+                    _amount
+                );
+            }
+        }
+        if (_protocol == SavingsProtocol.Aave) {
+            if (_fromUser) {
+                ERC20(AAVE_DAI_ADDRESS).transferFrom(
+                    msg.sender,
+                    address(this),
+                    _amount
+                );
+            }
+        }
         approveDeposit(_protocol);
 
         ProtocolInterface(getAddress(_protocol)).deposit(
@@ -109,6 +139,10 @@ contract SavingsProxy is ConstantAddresses {
         if (_protocol == SavingsProtocol.Dydx) {
             ERC20(SAI_ADDRESS).approve(SOLO_MARGIN_ADDRESS, uint256(-1));
             setDydxOperator(true);
+        }
+
+        if (_protocol == SavingsProtocol.Aave) {
+            ERC20(AAVE_DAI_ADDRESS).approve(getAddress(_protocol), uint256(-1));
         }
     }
 

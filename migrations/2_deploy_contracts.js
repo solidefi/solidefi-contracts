@@ -1,7 +1,7 @@
-const SavingsProxy = artifacts.require("./SavingsProxy.sol");
-const DydxSavingsProtocol = artifacts.require("./DydxSavingsProtocol.sol");
-const CompoundSavingsProtocol = artifacts.require("./CompoundSavingsProtocol");
-
+const ProtocolProxy = artifacts.require("./ProtocolProxy.sol");
+const DydxProtocol = artifacts.require("./DydxProtocol.sol");
+const CompoundProtocol = artifacts.require("./CompoundProtocol");
+const AaveProtocol = artifacts.require("./AaveProtocol");
 
 //require('dotenv').config();
 
@@ -11,19 +11,20 @@ module.exports = function (deployer, network, accounts) {
     deployer.then(async () => {
 
         // --------- first deploy this part ---------------------------------
-        // await deployer.deploy(DydxSavingsProtocol, { gas: 6000000 })
-        // await deployer.deploy(CompoundSavingsProtocol, { gas: 6000000 })
-        // --------- change addresses in SavingsProxy contract and then deploy this part --------------
-        let dydxSavingsProtocol = await DydxSavingsProtocol.deployed()
-        let compoundSavingsProtocol = await CompoundSavingsProtocol.deployed()
+        // await deployer.deploy(DydxProtocol, { gas: 6000000 })
+        // await deployer.deploy(CompoundProtocol, { gas: 6000000 })
+        //await deployer.deploy(AaveProtocol, { gas: 6000000 })
+        // --------- change addresses in protocolProxy contract and then deploy this part --------------
+        // let dydxProtocol = await DydxProtocol.deployed()
+        // let compoundProtocol = await CompoundProtocol.deployed()
+        let aaveProtocol = await AaveProtocol.deployed();
 
+        await deployer.deploy(ProtocolProxy, { gas: 6000000 })
+        let protocolProxy = await ProtocolProxy.deployed()
 
-        await deployer.deploy(SavingsProxy, { gas: 6000000 })
-        let savingsProxy = await SavingsProxy.deployed()
-
-        await dydxSavingsProtocol.addSavingsProxy(savingsProxy.address, { gas: 6000000 })
-        await compoundSavingsProtocol.addSavingsProxy(savingsProxy.address, { gas: 6000000 })
-
+        // await dydxProtocol.addProtocolProxy(protocolProxy.address, { gas: 6000000 })
+        // await compoundProtocol.addProtocolProxy(protocolProxy.address, { gas: 6000000 })
+        await aaveProtocol.addProtocolProxy(protocolProxy.address, { gas: 6000000 })
 
     });
 };

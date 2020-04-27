@@ -4,27 +4,26 @@ pragma experimental ABIEncoderV2;
 import "../ProtocolInterface.sol";
 import "../../interfaces/CTokenInterface.sol";
 import "../../compound/Exponential.sol";
-import "../../compound/StupidExchange.sol";
 import "../../interfaces/ERC20.sol";
 import "../../constants/ConstantAddresses.sol";
 import "../../DS/DSAuth.sol";
 
 
-contract CompoundSavingsProtocol is
+contract CompoundProtocol is
     ProtocolInterface,
     Exponential,
     ConstantAddresses,
     DSAuth
 {
     CTokenInterface public cDaiContract;
-    address public savingsProxy;
+    address public protocolProxy;
 
     constructor() public {
         cDaiContract = CTokenInterface(NEW_CDAI_ADDRESS);
     }
 
-    function addSavingsProxy(address _savingsProxy) public auth {
-        savingsProxy = _savingsProxy;
+    function addProtocolProxy(address _protocolProxy) public auth {
+        protocolProxy = _protocolProxy;
     }
 
     function deposit(address _user, uint256 _amount) public {

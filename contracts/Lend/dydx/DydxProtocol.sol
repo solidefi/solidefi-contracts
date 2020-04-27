@@ -1,4 +1,4 @@
-pragma solidity >=0.5.0;
+pragma solidity ^0.5.0;
 pragma experimental ABIEncoderV2;
 
 import "../ProtocolInterface.sol";
@@ -8,18 +8,18 @@ import "../../constants/ConstantAddresses.sol";
 import "../../DS/DSAuth.sol";
 
 
-contract DydxSavingsProtocol is ProtocolInterface, ConstantAddresses, DSAuth {
+contract DydxProtocol is ProtocolInterface, ConstantAddresses, DSAuth {
     ISoloMargin public soloMargin;
-    address public savingsProxy;
-
+    address public protocolProxy;
+    // kovan saiMarketId = 1 , mainnet daiMarketId= 3
     uint256 daiMarketId = 1;
 
     constructor() public {
         soloMargin = ISoloMargin(SOLO_MARGIN_ADDRESS);
     }
 
-    function addSavingsProxy(address _savingsProxy) public auth {
-        savingsProxy = _savingsProxy;
+    function addProtocolProxy(address _protocolProxy) public auth {
+        protocolProxy = _protocolProxy;
     }
 
     function deposit(address _user, uint256 _amount) public {
