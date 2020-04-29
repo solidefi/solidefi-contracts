@@ -9,8 +9,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
-    "type": "git",
-    "url": "git@gitlab.com:solidefi1/solidefi_contracts.git"
+    "type": "",
+    "url": ""
   },
   "author": "surbhi",
   "license": "ISC",
