@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/surbhiaudichya/defiMonobloc.git"
+    "url": "git@gitlab.com:solidefi1/solidefi_contracts.git"
   },
   "author": "surbhi",
   "license": "ISC",
