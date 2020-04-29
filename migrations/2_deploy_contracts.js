@@ -22,7 +22,7 @@ module.exports = function (deployer, network, accounts) {
         await deployer.deploy(ProtocolProxy, { gas: 6000000 })
         let protocolProxy = await ProtocolProxy.deployed()
 
-        // await dydxProtocol.addProtocolProxy(protocolProxy.address, { gas: 6000000 })
+        //await dydxProtocol.addProtocolProxy(protocolProxy.address, { gas: 6000000 })
         // await compoundProtocol.addProtocolProxy(protocolProxy.address, { gas: 6000000 })
         await aaveProtocol.addProtocolProxy(protocolProxy.address, { gas: 6000000 })
 

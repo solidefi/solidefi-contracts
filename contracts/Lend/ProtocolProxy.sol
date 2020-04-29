@@ -13,7 +13,7 @@ import "./dydx/ISoloMargin.sol";
 contract ProtocolProxy is ConstantAddresses {
     address public constant COMPOUND_ADDRESS = 0x51b599C3572A4DD2A896F36b5914F0bFb012BC58;
     address public constant DYDX_ADDRESS = 0x06bE8ff02421443332A38eDcf72c9d11F5b53426;
-    address public constant AAVE_ADDRESS = 0xf0B437Cd232041cE2B9912e86b5bEB64EE205F30;
+    address public constant AAVE_ADDRESS = 0xAA4809b498342335C02B6057f237f5C5916D8C79;
     enum SavingsProtocol {Compound, Dydx, Aave}
 
     function deposit(SavingsProtocol _protocol, uint256 _amount) public {
@@ -37,9 +37,9 @@ contract ProtocolProxy is ConstantAddresses {
     }
 
     function withdrawDai() public {
-        ERC20(SAI_ADDRESS).transfer(
+        ERC20(AAVE_DAI_ADDRESS).transfer(
             msg.sender,
-            ERC20(SAI_ADDRESS).balanceOf(address(this))
+            ERC20(AAVE_DAI_ADDRESS).balanceOf(address(this))
         );
     }
 
@@ -153,6 +153,10 @@ contract ProtocolProxy is ConstantAddresses {
 
         if (_protocol == SavingsProtocol.Dydx) {
             setDydxOperator(true);
+        }
+
+        if (_protocol == SavingsProtocol.Aave) {
+            ERC20(A_DAI_ADDRESS).approve(getAddress(_protocol), uint256(-1));
         }
     }
 
