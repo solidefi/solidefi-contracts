@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 
 
-contract SavingsLogger {
+contract Logger {
     event Deposit(address indexed sender, uint8 protocol, uint256 amount);
     event Withdraw(address indexed sender, uint8 protocol, uint256 amount);
 

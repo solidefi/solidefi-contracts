@@ -6,41 +6,62 @@ import "../interfaces/ERC20.sol";
 import "../interfaces/ITokenInterface.sol";
 import "../constants/ConstantAddresses.sol";
 import "./dydx/ISoloMargin.sol";
+import "./Logger.sol";
 
-
-//import "./SavingsLogger.sol";
 
 contract ProtocolProxy is ConstantAddresses {
-    address public constant COMPOUND_ADDRESS = 0x51b599C3572A4DD2A896F36b5914F0bFb012BC58;
-    address public constant DYDX_ADDRESS = 0x06bE8ff02421443332A38eDcf72c9d11F5b53426;
-    address public constant AAVE_ADDRESS = 0xAA4809b498342335C02B6057f237f5C5916D8C79;
+    address public constant COMPOUND_ADDRESS = 0x7eeD3EdE6d1B3aF32b2d43215fED3179719D6546;
+    address public constant DYDX_ADDRESS = 0x8C20cd586a829Dc33B1C57953e05c5c4E095eF70;
+    address public constant AAVE_ADDRESS = 0x506CC8dD661f7853291455BafA98b53b26Fc937A;
     enum SavingsProtocol {Compound, Dydx, Aave}
 
     function deposit(SavingsProtocol _protocol, uint256 _amount) public {
         _deposit(_protocol, _amount, true);
 
-        // SavingsLogger(SAVINGS_LOGGER_ADDRESS).logDeposit(
-        //     msg.sender,
-        //     uint8(_protocol),
-        //     _amount
-        // );
+        Logger(LOGGER_ADDRESS).logDeposit(
+            msg.sender,
+            uint8(_protocol),
+            _amount
+        );
     }
 
     function withdraw(SavingsProtocol _protocol, uint256 _amount) public {
         _withdraw(_protocol, _amount, true);
 
-        // SavingsLogger(SAVINGS_LOGGER_ADDRESS).logWithdraw(
-        //     msg.sender,
-        //     uint8(_protocol),
-        //     _amount
-        // );
+        Logger(LOGGER_ADDRESS).logWithdraw(
+            msg.sender,
+            uint8(_protocol),
+            _amount
+        );
     }
 
-    function withdrawDai() public {
-        ERC20(AAVE_DAI_ADDRESS).transfer(
-            msg.sender,
-            ERC20(AAVE_DAI_ADDRESS).balanceOf(address(this))
-        );
+    // main net
+    // function withdrawDai() public {
+    //     ERC20(DAI_ADDRESS).transfer(
+    //         msg.sender,
+    //         ERC20(DAI_ADDRESS).balanceOf(address(this))
+    //     );
+    // }
+    // kovan test net only
+    function withdrawDai(SavingsProtocol _protocol) public {
+        if (_protocol == SavingsProtocol.Compound) {
+            ERC20(DAI_ADDRESS).transfer(
+                msg.sender,
+                ERC20(DAI_ADDRESS).balanceOf(address(this))
+            );
+        }
+        if (_protocol == SavingsProtocol.Dydx) {
+            ERC20(SAI_ADDRESS).transfer(
+                msg.sender,
+                ERC20(SAI_ADDRESS).balanceOf(address(this))
+            );
+        }
+        if (_protocol == SavingsProtocol.Aave) {
+            ERC20(AAVE_DAI_ADDRESS).transfer(
+                msg.sender,
+                ERC20(AAVE_DAI_ADDRESS).balanceOf(address(this))
+            );
+        }
     }
 
     function getAddress(SavingsProtocol _protocol)
@@ -70,7 +91,7 @@ contract ProtocolProxy is ConstantAddresses {
         // kovan dydx SAI_ADDRESS
         // kovan Aave AAVE_DAI_ADDRESS
 
-        // just for testing on kovan due to diff dai address extra check
+        // just for testing on kovan due to diff dai address
         if (_protocol == SavingsProtocol.Compound) {
             if (_fromUser) {
                 ERC20(DAI_ADDRESS).transferFrom(
@@ -121,7 +142,7 @@ contract ProtocolProxy is ConstantAddresses {
         endAction(_protocol);
 
         if (_toUser) {
-            withdrawDai();
+            withdrawDai(_protocol);
         }
     }
 
@@ -156,7 +177,7 @@ contract ProtocolProxy is ConstantAddresses {
         }
 
         if (_protocol == SavingsProtocol.Aave) {
-            ERC20(A_DAI_ADDRESS).approve(getAddress(_protocol), uint256(-1));
+            ERC20(ADAI_ADDRESS).approve(getAddress(_protocol), uint256(-1));
         }
     }
 

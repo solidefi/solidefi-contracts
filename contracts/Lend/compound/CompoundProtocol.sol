@@ -31,10 +31,7 @@ contract CompoundProtocol is
         // get dai from user
         require(ERC20(DAI_ADDRESS).transferFrom(_user, address(this), _amount));
 
-        // mainnet only
         ERC20(DAI_ADDRESS).approve(NEW_CDAI_ADDRESS, uint256(-1));
-
-        // mint cDai
         require(cDaiContract.mint(_amount) == 0, "Failed Mint");
         // balance should be equal to cDai minted
         uint256 cDaiMinted = cDaiContract.balanceOf(address(this));
@@ -52,7 +49,7 @@ contract CompoundProtocol is
                 ERC20(NEW_CDAI_ADDRESS).balanceOf(_user)
             )
         );
-        // approve cDai to compound contract
+
         cDaiContract.approve(NEW_CDAI_ADDRESS, uint256(-1));
         // get dai from cDai contract
         require(cDaiContract.redeemUnderlying(_amount) == 0, "Reedem Failed");
