@@ -129,9 +129,11 @@ contract ProtocolProxy is ConstantAddresses {
         endAction(_protocol);
     }
 
-    function _withdraw(SavingsProtocol _protocol, uint256 _amount, bool _toUser)
-        public
-    {
+    function _withdraw(
+        SavingsProtocol _protocol,
+        uint256 _amount,
+        bool _toUser
+    ) public {
         approveWithdraw(_protocol);
 
         ProtocolInterface(getAddress(_protocol)).withdraw(
@@ -144,6 +146,27 @@ contract ProtocolProxy is ConstantAddresses {
         if (_toUser) {
             withdrawDai(_protocol);
         }
+    }
+
+    function swap(
+        SavingsProtocol _from,
+        SavingsProtocol _to,
+        uint256 _amount
+    ) public {
+        _withdraw(_from, _amount, false);
+
+        // possible to withdraw 1-2 wei less than actual amount due to division precision
+        // so we deposit all amount on DSProxy
+        uint256 amountToDeposit = ERC20(DAI_ADDRESS).balanceOf(address(this));
+
+        _deposit(_to, amountToDeposit, false);
+
+        Logger(LOGGER_ADDRESS).logSwap(
+            msg.sender,
+            uint8(_from),
+            uint8(_to),
+            _amount
+        );
     }
 
     function endAction(SavingsProtocol _protocol) internal {

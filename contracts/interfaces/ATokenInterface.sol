@@ -4,6 +4,11 @@ import "./ERC20.sol";
 
 
 contract ATokenInterface is ERC20 {
+    function principalBalanceOf(address _user)
+        external
+        view
+        returns (uint256 balance);
+
     function UINT_MAX_VALUE() external returns (uint256);
 
     function decreaseAllowance(address spender, uint256 subtractedValue)
