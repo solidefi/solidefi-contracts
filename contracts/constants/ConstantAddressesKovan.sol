@@ -4,7 +4,8 @@ pragma solidity >=0.5.0;
 contract ConstantAddressesKovan {
     address public constant MAKER_DAI_ADDRESS = 0xC4375B7De8af5a38a93548eb8453a498222C4fF2;
 
-    address public constant LOGGER_ADDRESS = 0x582e80BD86CDF67F98530ac60600858Cb4B86F91;
+    address public constant LOGGER_ADDRESS = 0xf1A6dA3d64F67c4A4800672836A4c5ebF4623473;
+    //0x582e80BD86CDF67F98530ac60600858Cb4B86F91
 
     address public constant COMPOUND_DAI_ADDRESS = 0x25a01a05C188DaCBCf1D61Af55D4a5B4021F7eeD;
     address public constant SOLO_MARGIN_ADDRESS = 0x4EC3570cADaAEE08Ae384779B0f3A45EF85289DE;

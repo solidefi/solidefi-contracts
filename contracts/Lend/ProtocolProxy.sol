@@ -21,7 +21,8 @@ contract ProtocolProxy is ConstantAddresses {
         Logger(LOGGER_ADDRESS).logDeposit(
             msg.sender,
             uint8(_protocol),
-            _amount
+            _amount,
+            uint256(now)
         );
     }
 
@@ -31,7 +32,8 @@ contract ProtocolProxy is ConstantAddresses {
         Logger(LOGGER_ADDRESS).logWithdraw(
             msg.sender,
             uint8(_protocol),
-            _amount
+            _amount,
+            uint256(now)
         );
     }
 
