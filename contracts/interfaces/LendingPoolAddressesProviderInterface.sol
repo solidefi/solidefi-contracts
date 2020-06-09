@@ -1,8 +1,8 @@
-pragma solidity ^0.5.0;
+pragma solidity >=0.6.0;
 
 
-contract LendingPoolAddressesProviderInterface {
-    function getLendingPool() external returns (address);
+abstract contract LendingPoolAddressesProviderInterface {
+    function getLendingPool() external virtual returns (address);
 
-    function getLendingPoolCore() external returns (address);
+    function getLendingPoolCore() external virtual returns (address);
 }

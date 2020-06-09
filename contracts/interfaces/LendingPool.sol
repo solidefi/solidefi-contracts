@@ -1,35 +1,40 @@
-pragma solidity ^0.5.0;
+pragma solidity >=0.6.0;
 
 
-contract LendingPool {
-    function deposit(address, uint256, uint16) external;
+abstract contract LendingPool {
+    function deposit(
+        address,
+        uint256,
+        uint16
+    ) external virtual;
 
     function redeemUnderlying(
         address _reserve,
         address payable _user,
         uint256 _amount,
         uint256 _aTokenBalanceAfterRedeem
-    ) external;
+    ) external virtual;
 
     function borrow(
         address _reserve,
         uint256 _amount,
         uint256 _interestRateMode,
         uint16 _referralCode
-    ) external;
+    ) external virtual;
 
     function repay(
         address _reserve,
         uint256 _amount,
         address payable _onBehalfOf
-    ) external payable;
+    ) external virtual payable;
 
-    function swapBorrowRateMode(address _reserve) external;
+    function swapBorrowRateMode(address _reserve) external virtual;
 
     function rebalanceStableBorrowRate(address _reserve, address _user)
-        external;
+        external
+        virtual;
 
-    function setUserUseReserveAsCollateral(address, bool) external;
+    function setUserUseReserveAsCollateral(address, bool) external virtual;
 
     function liquidationCall(
         address _collateral,
@@ -37,17 +42,18 @@ contract LendingPool {
         address _user,
         uint256 _purchaseAmount,
         bool _receiveAToken
-    ) external payable;
+    ) external virtual payable;
 
     function flashLoan(
         address _receiver,
         address _reserve,
         uint256 _amount,
         bytes memory _params
-    ) public;
+    ) public virtual;
 
     function getReserveConfigurationData(address _reserve)
         external
+        virtual
         view
         returns (
             uint256 ltv,
@@ -62,6 +68,7 @@ contract LendingPool {
 
     function getReserveData(address _reserve)
         external
+        virtual
         view
         returns (
             uint256 totalLiquidity,
@@ -81,6 +88,7 @@ contract LendingPool {
 
     function getUserAccountData(address _user)
         external
+        virtual
         view
         returns (
             uint256 totalLiquidityETH,
@@ -95,6 +103,7 @@ contract LendingPool {
 
     function getUserReserveData(address _reserve, address _user)
         external
+        virtual
         view
         returns (
             uint256 currentATokenBalance,
@@ -109,5 +118,5 @@ contract LendingPool {
             bool usageAsCollateralEnabled
         );
 
-    function getReserves() external view returns (address[] memory);
+    function getReserves() external virtual view returns (address[] memory);
 }

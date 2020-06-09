@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity >=0.6.0;
 pragma experimental ABIEncoderV2;
 import "../ProtocolInterface.sol";
 import "../../constants/ConstantAddresses.sol";
@@ -30,7 +30,7 @@ contract AaveProtocol is ProtocolInterface, ConstantAddresses, DSAuth {
         protocolProxy = _protocolProxy;
     }
 
-    function deposit(address _user, uint256 _amount) public {
+    function deposit(address _user, uint256 _amount) public override {
         require(msg.sender == _user);
 
         require(
@@ -48,7 +48,7 @@ contract AaveProtocol is ProtocolInterface, ConstantAddresses, DSAuth {
         aDaiContract.transfer(_user, aDaiMinted);
     }
 
-    function withdraw(address _user, uint256 _amount) public {
+    function withdraw(address _user, uint256 _amount) public override {
         require(msg.sender == _user);
         // transfer all users balance to this contract
         require(aDaiContract.transferFrom(_user, address(this), _amount));

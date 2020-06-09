@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity >=0.6.0;
 
 
 contract DSNote {
@@ -9,19 +9,16 @@ contract DSNote {
         bytes32 indexed bar,
         uint256 wad,
         bytes fax
-    ) anonymous;
+    ) anonymous ;
 
     modifier note {
         bytes32 foo;
         bytes32 bar;
-
         assembly {
             foo := calldataload(4)
             bar := calldataload(36)
         }
-
         emit LogNote(msg.sig, msg.sender, foo, bar, msg.value, msg.data);
-
         _;
     }
 }

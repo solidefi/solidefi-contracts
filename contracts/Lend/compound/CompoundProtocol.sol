@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity >=0.6.0;
 pragma experimental ABIEncoderV2;
 
 import "../ProtocolInterface.sol";
@@ -26,7 +26,7 @@ contract CompoundProtocol is
         protocolProxy = _protocolProxy;
     }
 
-    function deposit(address _user, uint256 _amount) public {
+    function deposit(address _user, uint256 _amount) public override {
         require(msg.sender == _user);
         // get dai from user
         require(ERC20(DAI_ADDRESS).transferFrom(_user, address(this), _amount));
@@ -39,7 +39,7 @@ contract CompoundProtocol is
         cDaiContract.transfer(_user, cDaiMinted);
     }
 
-    function withdraw(address _user, uint256 _amount) public {
+    function withdraw(address _user, uint256 _amount) public override {
         require(msg.sender == _user);
         // transfer all users balance to this contract
         require(

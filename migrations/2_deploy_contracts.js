@@ -10,7 +10,7 @@ module.exports = function (deployer, network, accounts) {
 
     deployer.then(async () => {
         // lend logger 
-        await deployer.deploy(Logger, { gas: 6000000 })
+        //await deployer.deploy(Logger, { gas: 6000000 })
         // --------- first deploy this part ---------------------------------
 
         // await deployer.deploy(CompoundProtocol, { gas: 6000000 })
@@ -21,16 +21,16 @@ module.exports = function (deployer, network, accounts) {
 
         // --------- change addresses in protocolProxy contract and then deploy this part --------------
 
-        // let dydxProtocol = await DydxProtocol.deployed()
-        // let compoundProtocol = await CompoundProtocol.deployed()
-        // let aaveProtocol = await AaveProtocol.deployed();
+        let dydxProtocol = await DydxProtocol.deployed()
+        let compoundProtocol = await CompoundProtocol.deployed()
+        let aaveProtocol = await AaveProtocol.deployed();
 
         await deployer.deploy(ProtocolProxy, { gas: 6000000 })
         let protocolProxy = await ProtocolProxy.deployed()
 
-        // await dydxProtocol.addProtocolProxy(protocolProxy.address, { gas: 6000000 })
-        // await compoundProtocol.addProtocolProxy(protocolProxy.address, { gas: 6000000 })
-        // await aaveProtocol.addProtocolProxy(protocolProxy.address, { gas: 6000000 })
+        await dydxProtocol.addProtocolProxy(protocolProxy.address, { gas: 6000000 })
+        await compoundProtocol.addProtocolProxy(protocolProxy.address, { gas: 6000000 })
+        await aaveProtocol.addProtocolProxy(protocolProxy.address, { gas: 6000000 })
 
     });
 };

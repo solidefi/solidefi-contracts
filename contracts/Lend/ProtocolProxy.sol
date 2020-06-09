@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity >=0.6.0;
 pragma experimental ABIEncoderV2;
 
 import "./ProtocolInterface.sol";
@@ -10,31 +10,21 @@ import "./Logger.sol";
 
 
 contract ProtocolProxy is ConstantAddresses {
-    address public constant COMPOUND_ADDRESS = 0x7eeD3EdE6d1B3aF32b2d43215fED3179719D6546;
-    address public constant DYDX_ADDRESS = 0x8C20cd586a829Dc33B1C57953e05c5c4E095eF70;
-    address public constant AAVE_ADDRESS = 0x506CC8dD661f7853291455BafA98b53b26Fc937A;
+    address public constant COMPOUND_ADDRESS = 0xAE3bb3fc32E2865B2163cBca90889b22fD4AFe56;
+    address public constant DYDX_ADDRESS = 0x521C1b1a65c120DC10B4b2D90bD864dbe6ccDa72;
+    address public constant AAVE_ADDRESS = 0x1240532885645b9e2905FAD19b6F98eD377775ba;
     enum SavingsProtocol {Compound, Dydx, Aave}
 
     function deposit(SavingsProtocol _protocol, uint256 _amount) public {
         _deposit(_protocol, _amount, true);
 
-        Logger(LOGGER_ADDRESS).logDeposit(
-            msg.sender,
-            uint8(_protocol),
-            _amount,
-            uint256(now)
-        );
+        Logger(LOGGER_ADDRESS).logDeposit(msg.sender, uint8(_protocol), _amount, uint256(now));
     }
 
     function withdraw(SavingsProtocol _protocol, uint256 _amount) public {
         _withdraw(_protocol, _amount, true);
 
-        Logger(LOGGER_ADDRESS).logWithdraw(
-            msg.sender,
-            uint8(_protocol),
-            _amount,
-            uint256(now)
-        );
+        Logger(LOGGER_ADDRESS).logWithdraw(msg.sender, uint8(_protocol), _amount, uint256(now));
     }
 
     // main net
@@ -47,16 +37,10 @@ contract ProtocolProxy is ConstantAddresses {
     // kovan test net only
     function withdrawDai(SavingsProtocol _protocol) public {
         if (_protocol == SavingsProtocol.Compound) {
-            ERC20(DAI_ADDRESS).transfer(
-                msg.sender,
-                ERC20(DAI_ADDRESS).balanceOf(address(this))
-            );
+            ERC20(DAI_ADDRESS).transfer(msg.sender, ERC20(DAI_ADDRESS).balanceOf(address(this)));
         }
         if (_protocol == SavingsProtocol.Dydx) {
-            ERC20(SAI_ADDRESS).transfer(
-                msg.sender,
-                ERC20(SAI_ADDRESS).balanceOf(address(this))
-            );
+            ERC20(SAI_ADDRESS).transfer(msg.sender, ERC20(SAI_ADDRESS).balanceOf(address(this)));
         }
         if (_protocol == SavingsProtocol.Aave) {
             ERC20(AAVE_DAI_ADDRESS).transfer(
@@ -66,11 +50,7 @@ contract ProtocolProxy is ConstantAddresses {
         }
     }
 
-    function getAddress(SavingsProtocol _protocol)
-        public
-        pure
-        returns (address)
-    {
+    function getAddress(SavingsProtocol _protocol) public pure returns (address) {
         if (_protocol == SavingsProtocol.Compound) {
             return COMPOUND_ADDRESS;
         }
@@ -96,37 +76,22 @@ contract ProtocolProxy is ConstantAddresses {
         // just for testing on kovan due to diff dai address
         if (_protocol == SavingsProtocol.Compound) {
             if (_fromUser) {
-                ERC20(DAI_ADDRESS).transferFrom(
-                    msg.sender,
-                    address(this),
-                    _amount
-                );
+                ERC20(DAI_ADDRESS).transferFrom(msg.sender, address(this), _amount);
             }
         }
         if (_protocol == SavingsProtocol.Dydx) {
             if (_fromUser) {
-                ERC20(SAI_ADDRESS).transferFrom(
-                    msg.sender,
-                    address(this),
-                    _amount
-                );
+                ERC20(SAI_ADDRESS).transferFrom(msg.sender, address(this), _amount);
             }
         }
         if (_protocol == SavingsProtocol.Aave) {
             if (_fromUser) {
-                ERC20(AAVE_DAI_ADDRESS).transferFrom(
-                    msg.sender,
-                    address(this),
-                    _amount
-                );
+                ERC20(AAVE_DAI_ADDRESS).transferFrom(msg.sender, address(this), _amount);
             }
         }
         approveDeposit(_protocol);
 
-        ProtocolInterface(getAddress(_protocol)).deposit(
-            address(this),
-            _amount
-        );
+        ProtocolInterface(getAddress(_protocol)).deposit(address(this), _amount);
 
         endAction(_protocol);
     }
@@ -138,10 +103,7 @@ contract ProtocolProxy is ConstantAddresses {
     ) public {
         approveWithdraw(_protocol);
 
-        ProtocolInterface(getAddress(_protocol)).withdraw(
-            address(this),
-            _amount
-        );
+        ProtocolInterface(getAddress(_protocol)).withdraw(address(this), _amount);
 
         endAction(_protocol);
 
@@ -163,12 +125,7 @@ contract ProtocolProxy is ConstantAddresses {
 
         _deposit(_to, amountToDeposit, false);
 
-        Logger(LOGGER_ADDRESS).logSwap(
-            msg.sender,
-            uint8(_from),
-            uint8(_to),
-            _amount
-        );
+        Logger(LOGGER_ADDRESS).logSwap(msg.sender, uint8(_from), uint8(_to), _amount);
     }
 
     function endAction(SavingsProtocol _protocol) internal {
@@ -207,9 +164,7 @@ contract ProtocolProxy is ConstantAddresses {
     }
 
     function setDydxOperator(bool _trusted) internal {
-
-            ISoloMargin.OperatorArg[] memory operatorArgs
-         = new ISoloMargin.OperatorArg[](1);
+        ISoloMargin.OperatorArg[] memory operatorArgs = new ISoloMargin.OperatorArg[](1);
         operatorArgs[0] = ISoloMargin.OperatorArg({
             operator: getAddress(SavingsProtocol.Dydx),
             trusted: _trusted

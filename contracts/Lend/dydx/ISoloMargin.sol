@@ -1,11 +1,12 @@
-pragma solidity >=0.5.0;
+pragma solidity >=0.6.0;
 pragma experimental ABIEncoderV2;
 
 import "./lib/Actions.sol";
 import "./lib/Account.sol";
 import "./lib/Types.sol";
 
-contract ISoloMargin {
+
+abstract contract ISoloMargin {
     struct OperatorArg {
         address operator;
         bool trusted;
@@ -14,12 +15,17 @@ contract ISoloMargin {
     function operate(
         Account.Info[] memory accounts,
         Actions.ActionArgs[] memory actions
-    ) public;
+    ) public virtual;
 
     function getAccountBalances(Account.Info memory account)
         public
+        virtual
         view
-        returns (address[] memory, Types.Par[] memory, Types.Wei[] memory);
+        returns (
+            address[] memory,
+            Types.Par[] memory,
+            Types.Wei[] memory
+        );
 
-    function setOperators(OperatorArg[] memory args) public;
+    function setOperators(OperatorArg[] memory args) public virtual;
 }

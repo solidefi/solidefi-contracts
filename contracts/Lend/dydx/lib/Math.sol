@@ -16,11 +16,12 @@
 
 */
 
-pragma solidity >=0.5.0;
+pragma solidity >=0.6.0;
 pragma experimental ABIEncoderV2;
 
 import {SafeMath} from "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import {Require} from "./Require.sol";
+
 
 /**
  * @title Math
@@ -40,11 +41,11 @@ library Math {
     /*
      * Return target * (numerator / denominator).
      */
-    function getPartial(uint256 target, uint256 numerator, uint256 denominator)
-        internal
-        pure
-        returns (uint256)
-    {
+    function getPartial(
+        uint256 target,
+        uint256 numerator,
+        uint256 denominator
+    ) internal pure returns (uint256) {
         return target.mul(numerator).div(denominator);
     }
 

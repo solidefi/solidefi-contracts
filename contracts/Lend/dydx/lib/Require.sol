@@ -16,8 +16,9 @@
 
 */
 
-pragma solidity >=0.5.0;
+pragma solidity >=0.6.0;
 pragma experimental ABIEncoderV2;
+
 
 /**
  * @title Require
@@ -39,7 +40,11 @@ library Require {
 
     // ============ Library Functions ============
 
-    function that(bool must, bytes32 file, bytes32 reason) internal pure {
+    function that(
+        bool must,
+        bytes32 file,
+        bytes32 reason
+    ) internal pure {
         if (!must) {
             revert(
                 string(
@@ -53,10 +58,12 @@ library Require {
         }
     }
 
-    function that(bool must, bytes32 file, bytes32 reason, uint256 payloadA)
-        internal
-        pure
-    {
+    function that(
+        bool must,
+        bytes32 file,
+        bytes32 reason,
+        uint256 payloadA
+    ) internal pure {
         if (!must) {
             revert(
                 string(
@@ -98,10 +105,12 @@ library Require {
         }
     }
 
-    function that(bool must, bytes32 file, bytes32 reason, address payloadA)
-        internal
-        pure
-    {
+    function that(
+        bool must,
+        bytes32 file,
+        bytes32 reason,
+        address payloadA
+    ) internal pure {
         if (!must) {
             revert(
                 string(
@@ -171,10 +180,12 @@ library Require {
         }
     }
 
-    function that(bool must, bytes32 file, bytes32 reason, bytes32 payloadA)
-        internal
-        pure
-    {
+    function that(
+        bool must,
+        bytes32 file,
+        bytes32 reason,
+        bytes32 payloadA
+    ) internal pure {
         if (!must) {
             revert(
                 string(

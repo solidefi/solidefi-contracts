@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity >=0.6.0;
 pragma experimental ABIEncoderV2;
 
 import "../ProtocolInterface.sol";
@@ -22,9 +22,8 @@ contract DydxProtocol is ProtocolInterface, ConstantAddresses, DSAuth {
         protocolProxy = _protocolProxy;
     }
 
-    function deposit(address _user, uint256 _amount) public {
+    function deposit(address _user, uint256 _amount) public override {
         require(msg.sender == _user);
-
         Account.Info[] memory accounts = new Account.Info[](1);
         accounts[0] = getAccount(_user, 0);
 
@@ -50,7 +49,7 @@ contract DydxProtocol is ProtocolInterface, ConstantAddresses, DSAuth {
         soloMargin.operate(accounts, actions);
     }
 
-    function withdraw(address _user, uint256 _amount) public {
+    function withdraw(address _user, uint256 _amount) public override {
         require(msg.sender == _user);
 
         Account.Info[] memory accounts = new Account.Info[](1);
