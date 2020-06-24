@@ -3,16 +3,14 @@ pragma experimental ABIEncoderV2;
 
 import "./ProtocolInterface.sol";
 import "../interfaces/ERC20.sol";
-import "../interfaces/ITokenInterface.sol";
 import "../constants/ConstantAddresses.sol";
 import "./dydx/ISoloMargin.sol";
 import "./Logger.sol";
 
-
 contract ProtocolProxy is ConstantAddresses {
-    address public constant COMPOUND_ADDRESS = 0xAE3bb3fc32E2865B2163cBca90889b22fD4AFe56;
-    address public constant DYDX_ADDRESS = 0x521C1b1a65c120DC10B4b2D90bD864dbe6ccDa72;
-    address public constant AAVE_ADDRESS = 0x1240532885645b9e2905FAD19b6F98eD377775ba;
+    address public constant SAVINGS_COMPOUND_ADDRESS = 0xFca70d5e2Ba8EF6c2B13cD43Ad8eFdDEDEd6aA13;
+    address public constant SAVINGS_DYDX_ADDRESS = 0xb44dd830d255182D24ED2Eb74b5ceDf4F1b18C75;
+    address public constant SAVINGS_AAVE_ADDRESS = 0xb63dB2CB8a62D3564B3C984aa02AC820573BF64a;
     enum SavingsProtocol {Compound, Dydx, Aave}
 
     function deposit(SavingsProtocol _protocol, uint256 _amount) public {
@@ -52,15 +50,15 @@ contract ProtocolProxy is ConstantAddresses {
 
     function getAddress(SavingsProtocol _protocol) public pure returns (address) {
         if (_protocol == SavingsProtocol.Compound) {
-            return COMPOUND_ADDRESS;
+            return SAVINGS_COMPOUND_ADDRESS;
         }
 
         if (_protocol == SavingsProtocol.Dydx) {
-            return DYDX_ADDRESS;
+            return SAVINGS_DYDX_ADDRESS;
         }
 
         if (_protocol == SavingsProtocol.Aave) {
-            return AAVE_ADDRESS;
+            return SAVINGS_AAVE_ADDRESS;
         }
     }
 
@@ -119,8 +117,6 @@ contract ProtocolProxy is ConstantAddresses {
     ) public {
         _withdraw(_from, _amount, false);
 
-        // possible to withdraw 1-2 wei less than actual amount due to division precision
-        // so we deposit all amount on DSProxy
         uint256 amountToDeposit = ERC20(DAI_ADDRESS).balanceOf(address(this));
 
         _deposit(_to, amountToDeposit, false);
@@ -151,7 +147,7 @@ contract ProtocolProxy is ConstantAddresses {
 
     function approveWithdraw(SavingsProtocol _protocol) internal {
         if (_protocol == SavingsProtocol.Compound) {
-            ERC20(NEW_CDAI_ADDRESS).approve(getAddress(_protocol), uint256(-1));
+            ERC20(CDAI_ADDRESS).approve(getAddress(_protocol), uint256(-1));
         }
 
         if (_protocol == SavingsProtocol.Dydx) {

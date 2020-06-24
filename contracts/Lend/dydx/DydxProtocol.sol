@@ -1,3 +1,25 @@
+// MIT License
+
+// Copyright (c) 2019 DecenterApps
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.6.0;
 pragma experimental ABIEncoderV2;
 
@@ -5,10 +27,8 @@ import "../ProtocolInterface.sol";
 import "./ISoloMargin.sol";
 import "../../interfaces/ERC20.sol";
 import "../../constants/ConstantAddresses.sol";
-import "../../DS/DSAuth.sol";
 
-
-contract DydxProtocol is ProtocolInterface, ConstantAddresses, DSAuth {
+contract DydxProtocol is ProtocolInterface, ConstantAddresses {
     ISoloMargin public soloMargin;
     address public protocolProxy;
     // kovan saiMarketId = 1 , mainnet daiMarketId= 3
@@ -16,10 +36,6 @@ contract DydxProtocol is ProtocolInterface, ConstantAddresses, DSAuth {
 
     constructor() public {
         soloMargin = ISoloMargin(SOLO_MARGIN_ADDRESS);
-    }
-
-    function addProtocolProxy(address _protocolProxy) public auth {
-        protocolProxy = _protocolProxy;
     }
 
     function deposit(address _user, uint256 _amount) public override {
@@ -77,41 +93,22 @@ contract DydxProtocol is ProtocolInterface, ConstantAddresses, DSAuth {
         soloMargin.operate(accounts, actions);
     }
 
-    function getWeiBalance(address _user, uint256 _index)
-        public
-        view
-        returns (Types.Wei memory)
-    {
+    function getWeiBalance(address _user, uint256 _index) public view returns (Types.Wei memory) {
         Types.Wei[] memory weiBalances;
-        (, , weiBalances) = soloMargin.getAccountBalances(
-            getAccount(_user, _index)
-        );
+        (, , weiBalances) = soloMargin.getAccountBalances(getAccount(_user, _index));
 
         return weiBalances[daiMarketId];
     }
 
-    function getParBalance(address _user, uint256 _index)
-        public
-        view
-        returns (Types.Par memory)
-    {
+    function getParBalance(address _user, uint256 _index) public view returns (Types.Par memory) {
         Types.Par[] memory parBalances;
-        (, parBalances, ) = soloMargin.getAccountBalances(
-            getAccount(_user, _index)
-        );
+        (, parBalances, ) = soloMargin.getAccountBalances(getAccount(_user, _index));
 
         return parBalances[daiMarketId];
     }
 
-    function getAccount(address _user, uint256 _index)
-        public
-        view
-        returns (Account.Info memory)
-    {
-        Account.Info memory account = Account.Info({
-            owner: _user,
-            number: _index
-        });
+    function getAccount(address _user, uint256 _index) public view returns (Account.Info memory) {
+        Account.Info memory account = Account.Info({owner: _user, number: _index});
 
         return account;
     }
