@@ -26,13 +26,17 @@ pragma experimental ABIEncoderV2;
 import "../ProtocolInterface.sol";
 import "./ISoloMargin.sol";
 import "../../interfaces/ERC20.sol";
-import "../../constants/ConstantAddresses.sol";
 
-contract DydxProtocol is ProtocolInterface, ConstantAddresses {
+contract DydxProtocol is ProtocolInterface {
+    address public constant SOLO_MARGIN_ADDRESS = 0x1E0447b19BB6EcFdAe1e4AE1694b0C3659614e4e;
+
     ISoloMargin public soloMargin;
     address public protocolProxy;
-    // kovan saiMarketId = 1 , mainnet daiMarketId= 3
+    // kovan saiMarketId = 1
     uint256 daiMarketId = 1;
+
+    //mainnet
+    //uint256 daiMarketId = 3;
 
     constructor() public {
         soloMargin = ISoloMargin(SOLO_MARGIN_ADDRESS);

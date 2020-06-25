@@ -1,25 +1,9 @@
 pragma solidity >=0.6.0;
 
-
 contract Logger {
-    event Deposit(
-        address indexed sender,
-        uint8 protocol,
-        uint256 amount,
-        uint256 _timestamp
-    );
-    event Withdraw(
-        address indexed sender,
-        uint8 protocol,
-        uint256 amount,
-        uint256 _timestamp
-    );
-    event Swap(
-        address indexed sender,
-        uint8 fromProtocol,
-        uint8 toProtocol,
-        uint256 amount
-    );
+    event Deposit(address indexed sender, uint8 protocol, uint256 amount, uint256 timestamp);
+    event Withdraw(address indexed sender, uint8 protocol, uint256 amount, uint256 timestamp);
+    event Swap(address indexed sender, uint8 fromProtocol, uint8 toProtocol, uint256 amount);
 
     function logDeposit(
         address _sender,

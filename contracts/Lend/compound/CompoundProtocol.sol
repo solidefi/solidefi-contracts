@@ -4,11 +4,17 @@ pragma experimental ABIEncoderV2;
 import "../ProtocolInterface.sol";
 import "../../interfaces/CTokenInterface.sol";
 import "../../interfaces/ERC20.sol";
-import "../../constants/ConstantAddresses.sol";
 
-contract CompoundProtocol is ProtocolInterface, ConstantAddresses {
+contract CompoundProtocol is ProtocolInterface {
+    // kovan
+    address public constant DAI_ADDRESS = 0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa;
+    address public constant CDAI_ADDRESS = 0xe7bc397DBd069fC7d0109C0636d06888bb50668c;
+
+    //mainnet
+    // address public constant DAI_ADDRESS = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+    // address public constant CDAI_ADDRESS = 0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643;
+
     CTokenInterface public cDaiContract;
-    address public protocolProxy;
 
     constructor() public {
         cDaiContract = CTokenInterface(CDAI_ADDRESS);

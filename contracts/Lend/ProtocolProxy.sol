@@ -3,14 +3,35 @@ pragma experimental ABIEncoderV2;
 
 import "./ProtocolInterface.sol";
 import "../interfaces/ERC20.sol";
-import "../constants/ConstantAddresses.sol";
 import "./dydx/ISoloMargin.sol";
 import "./Logger.sol";
 
-contract ProtocolProxy is ConstantAddresses {
+contract ProtocolProxy {
+    // kovan
+    address public constant LOGGER_ADDRESS = 0xf1A6dA3d64F67c4A4800672836A4c5ebF4623473;
     address public constant SAVINGS_COMPOUND_ADDRESS = 0xFca70d5e2Ba8EF6c2B13cD43Ad8eFdDEDEd6aA13;
     address public constant SAVINGS_DYDX_ADDRESS = 0xb44dd830d255182D24ED2Eb74b5ceDf4F1b18C75;
     address public constant SAVINGS_AAVE_ADDRESS = 0xb63dB2CB8a62D3564B3C984aa02AC820573BF64a;
+    //constant kovan
+    address public constant DAI_ADDRESS = 0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa;
+    address public constant SAI_ADDRESS = 0xC4375B7De8af5a38a93548eb8453a498222C4fF2;
+    address public constant AAVE_DAI_ADDRESS = 0xFf795577d9AC8bD7D90Ee22b6C1703490b6512FD;
+    address public constant ADAI_ADDRESS = 0x58AD4cB396411B691A9AAb6F74545b2C5217FE6a;
+    address public constant CDAI_ADDRESS = 0xe7bc397DBd069fC7d0109C0636d06888bb50668c;
+    address public constant SOLO_MARGIN_ADDRESS = 0x4EC3570cADaAEE08Ae384779B0f3A45EF85289DE;
+
+    // mainnet
+    // address public constant LOGGER_ADDRESS = 0xf1A6dA3d64F67c4A4800672836A4c5ebF4623473;
+    // address public constant SAVINGS_COMPOUND_ADDRESS = 0xFca70d5e2Ba8EF6c2B13cD43Ad8eFdDEDEd6aA13;
+    // address public constant SAVINGS_DYDX_ADDRESS = 0xb44dd830d255182D24ED2Eb74b5ceDf4F1b18C75;
+    // address public constant SAVINGS_AAVE_ADDRESS = 0xb63dB2CB8a62D3564B3C984aa02AC820573BF64a;
+
+    // constant mainnet
+    // address public constant DAI_ADDRESS = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+    // address public constant ADAI_ADDRESS = 0xfC1E690f61EFd961294b3e1Ce3313fBD8aa4f85d;
+    // address public constant CDAI_ADDRESS = 0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643;
+    // address public constant SOLO_MARGIN_ADDRESS = 0x1E0447b19BB6EcFdAe1e4AE1694b0C3659614e4e;
+
     enum SavingsProtocol {Compound, Dydx, Aave}
 
     function deposit(SavingsProtocol _protocol, uint256 _amount) public {
