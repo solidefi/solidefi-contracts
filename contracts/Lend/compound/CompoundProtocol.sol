@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >=0.6.0;
 pragma experimental ABIEncoderV2;
 
@@ -6,6 +7,9 @@ import "../../interfaces/CTokenInterface.sol";
 import "../../interfaces/ERC20.sol";
 
 contract CompoundProtocol is ProtocolInterface {
+    // rinkeby
+    // address public constant DAI_ADDRESS = 0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa;
+    // address public constant CDAI_ADDRESS = 0x6D7F0754FFeb405d23C51CE938289d4835bE3b14;
     // kovan
     address public constant DAI_ADDRESS = 0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa;
     address public constant CDAI_ADDRESS = 0xe7bc397DBd069fC7d0109C0636d06888bb50668c;

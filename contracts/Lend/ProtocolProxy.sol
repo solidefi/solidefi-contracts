@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >=0.6.0;
 pragma experimental ABIEncoderV2;
 
@@ -7,11 +8,15 @@ import "./dydx/ISoloMargin.sol";
 import "./Logger.sol";
 
 contract ProtocolProxy {
+    //Rinkeby
+
+    // address public constant DAI_ADDRESS = 0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa;
+    // address public constant SAVINGS_COMPOUND_ADDRESS = 0x21182Be016C37B0CFD70Bf4Fbbe8B983c365D60E;
     // kovan
     address public constant LOGGER_ADDRESS = 0xf1A6dA3d64F67c4A4800672836A4c5ebF4623473;
-    address public constant SAVINGS_COMPOUND_ADDRESS = 0xFca70d5e2Ba8EF6c2B13cD43Ad8eFdDEDEd6aA13;
-    address public constant SAVINGS_DYDX_ADDRESS = 0xb44dd830d255182D24ED2Eb74b5ceDf4F1b18C75;
-    address public constant SAVINGS_AAVE_ADDRESS = 0xb63dB2CB8a62D3564B3C984aa02AC820573BF64a;
+    address public constant SAVINGS_COMPOUND_ADDRESS = 0x0b45C51740491c19109ba0Cf513342450E4d36Ed;
+    address public constant SAVINGS_DYDX_ADDRESS = 0xcfB88f711b05c5A0ff799850Da7A57b9b88De0b6;
+    address public constant SAVINGS_AAVE_ADDRESS = 0xb9D9E0c41d45263420352c261ea4F53Dc2e7fc95;
     //constant kovan
     address public constant DAI_ADDRESS = 0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa;
     address public constant SAI_ADDRESS = 0xC4375B7De8af5a38a93548eb8453a498222C4fF2;

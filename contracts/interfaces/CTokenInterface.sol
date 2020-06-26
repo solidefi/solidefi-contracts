@@ -1,7 +1,7 @@
+// SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >=0.6.0;
 
 import "./ERC20.sol";
-
 
 abstract contract CTokenInterface is ERC20 {
     function mint(uint256 mintAmount) external virtual returns (uint256);
@@ -10,17 +10,11 @@ abstract contract CTokenInterface is ERC20 {
 
     function redeem(uint256 redeemTokens) external virtual returns (uint256);
 
-    function redeemUnderlying(uint256 redeemAmount)
-        external
-        virtual
-        returns (uint256);
+    function redeemUnderlying(uint256 redeemAmount) external virtual returns (uint256);
 
     function borrow(uint256 borrowAmount) external virtual returns (uint256);
 
-    function repayBorrow(uint256 repayAmount)
-        external
-        virtual
-        returns (uint256);
+    function repayBorrow(uint256 repayAmount) external virtual returns (uint256);
 
     function repayBorrow() external virtual payable;
 
@@ -37,10 +31,7 @@ abstract contract CTokenInterface is ERC20 {
         address cTokenCollateral
     ) external virtual returns (uint256);
 
-    function liquidateBorrow(address borrower, address cTokenCollateral)
-        external
-        virtual
-        payable;
+    function liquidateBorrow(address borrower, address cTokenCollateral) external virtual payable;
 
     function exchangeRateCurrent() external virtual returns (uint256);
 
@@ -52,17 +43,11 @@ abstract contract CTokenInterface is ERC20 {
 
     function reserveFactorMantissa() external virtual returns (uint256);
 
-    function borrowBalanceCurrent(address account)
-        external
-        virtual
-        returns (uint256);
+    function borrowBalanceCurrent(address account) external virtual returns (uint256);
 
     function totalBorrowsCurrent() external virtual returns (uint256);
 
     function getCash() external virtual returns (uint256);
 
-    function balanceOfUnderlying(address owner)
-        external
-        virtual
-        returns (uint256);
+    function balanceOfUnderlying(address owner) external virtual returns (uint256);
 }

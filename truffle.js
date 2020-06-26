@@ -31,6 +31,15 @@ module.exports = {
             gasPrice: 3000000000,
             skipDryRun: false,
         },
+        rinkeby: {
+            provider: function () {
+                return new HDWalletProvider(mnemonic, process.env.RINKEBY_INFURA_ENDPOINT, 0, 15);
+            },
+            network_id: '4',
+            gas: 8000000,
+            gasPrice: 3000000000,
+            skipDryRun: false,
+        },
     },
     compilers: {
         solc: {

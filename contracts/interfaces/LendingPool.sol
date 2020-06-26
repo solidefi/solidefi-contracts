@@ -1,5 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >=0.6.0;
-
 
 abstract contract LendingPool {
     function deposit(
@@ -30,9 +30,7 @@ abstract contract LendingPool {
 
     function swapBorrowRateMode(address _reserve) external virtual;
 
-    function rebalanceStableBorrowRate(address _reserve, address _user)
-        external
-        virtual;
+    function rebalanceStableBorrowRate(address _reserve, address _user) external virtual;
 
     function setUserUseReserveAsCollateral(address, bool) external virtual;
 
