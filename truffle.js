@@ -19,8 +19,8 @@ module.exports = {
                 return new HDWalletProvider(mnemonic, process.env.MAINNET_INFURA_ENDPOINT);
             },
             network_id: '1',
-            gasPrice: 8100000000, // 8.1 gwei
-            skipDryRun: true,
+            gasPrice: 28100000000, // 28.1 gwei
+            skipDryRun: false,
         },
         kovan: {
             provider: function () {
@@ -29,13 +29,22 @@ module.exports = {
             network_id: '42',
             gas: 8000000,
             gasPrice: 3000000000,
-            skipDryRun: false,
+            skipDryRun: true,
         },
         rinkeby: {
             provider: function () {
                 return new HDWalletProvider(mnemonic, process.env.RINKEBY_INFURA_ENDPOINT, 0, 15);
             },
             network_id: '4',
+            gas: 8000000,
+            gasPrice: 3000000000,
+            skipDryRun: false,
+        },
+        ropsten: {
+            provider: function () {
+                return new HDWalletProvider(mnemonic, process.env.ROPSTEN_INFURA_ENDPOINT, 0, 15);
+            },
+            network_id: '3',
             gas: 8000000,
             gasPrice: 3000000000,
             skipDryRun: false,
