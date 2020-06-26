@@ -6,6 +6,7 @@ import "./ProtocolInterface.sol";
 import "../interfaces/ERC20.sol";
 import "./dydx/ISoloMargin.sol";
 import "./Logger.sol";
+import "../interfaces/ComptrollerInterface.sol";
 
 contract ProtocolProxy {
     //Rinkeby
@@ -14,7 +15,7 @@ contract ProtocolProxy {
     // address public constant SAVINGS_COMPOUND_ADDRESS = 0x21182Be016C37B0CFD70Bf4Fbbe8B983c365D60E;
     // kovan
     address public constant LOGGER_ADDRESS = 0xf1A6dA3d64F67c4A4800672836A4c5ebF4623473;
-    address public constant SAVINGS_COMPOUND_ADDRESS = 0x0b45C51740491c19109ba0Cf513342450E4d36Ed;
+    address public constant SAVINGS_COMPOUND_ADDRESS = 0x28C48Aa83DA32a16640BeAb73aBB1deA14359cF7;
     address public constant SAVINGS_DYDX_ADDRESS = 0xcfB88f711b05c5A0ff799850Da7A57b9b88De0b6;
     address public constant SAVINGS_AAVE_ADDRESS = 0xb9D9E0c41d45263420352c261ea4F53Dc2e7fc95;
     //constant kovan
@@ -22,8 +23,9 @@ contract ProtocolProxy {
     address public constant SAI_ADDRESS = 0xC4375B7De8af5a38a93548eb8453a498222C4fF2;
     address public constant AAVE_DAI_ADDRESS = 0xFf795577d9AC8bD7D90Ee22b6C1703490b6512FD;
     address public constant ADAI_ADDRESS = 0x58AD4cB396411B691A9AAb6F74545b2C5217FE6a;
-    address public constant CDAI_ADDRESS = 0xe7bc397DBd069fC7d0109C0636d06888bb50668c;
+    address public constant CDAI_ADDRESS = 0xF0d0EB522cfa50B716B3b1604C4F0fA6f04376AD;
     address public constant SOLO_MARGIN_ADDRESS = 0x4EC3570cADaAEE08Ae384779B0f3A45EF85289DE;
+    address public constant COMPTROLLER_ADDRESS = 0x5eAe89DC1C671724A672ff0630122ee834098657;
 
     // mainnet
     // address public constant LOGGER_ADDRESS = 0xf1A6dA3d64F67c4A4800672836A4c5ebF4623473;
@@ -36,6 +38,7 @@ contract ProtocolProxy {
     // address public constant ADAI_ADDRESS = 0xfC1E690f61EFd961294b3e1Ce3313fBD8aa4f85d;
     // address public constant CDAI_ADDRESS = 0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643;
     // address public constant SOLO_MARGIN_ADDRESS = 0x1E0447b19BB6EcFdAe1e4AE1694b0C3659614e4e;
+    //address public constant COMPTROLLER_ADDRESS = 0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B;
 
     enum SavingsProtocol {Compound, Dydx, Aave}
 
@@ -193,5 +196,9 @@ contract ProtocolProxy {
         });
 
         ISoloMargin(SOLO_MARGIN_ADDRESS).setOperators(operatorArgs);
+    }
+
+    function claimComp() public {
+        ComptrollerInterface(COMPTROLLER_ADDRESS).claimComp(address(this));
     }
 }
