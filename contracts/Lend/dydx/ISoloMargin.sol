@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >=0.6.0;
 pragma experimental ABIEncoderV2;
 
@@ -5,17 +6,15 @@ import "./lib/Actions.sol";
 import "./lib/Account.sol";
 import "./lib/Types.sol";
 
-
 abstract contract ISoloMargin {
     struct OperatorArg {
         address operator;
         bool trusted;
     }
 
-    function operate(
-        Account.Info[] memory accounts,
-        Actions.ActionArgs[] memory actions
-    ) public virtual;
+    function operate(Account.Info[] memory accounts, Actions.ActionArgs[] memory actions)
+        public
+        virtual;
 
     function getAccountBalances(Account.Info memory account)
         public

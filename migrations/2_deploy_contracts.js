@@ -10,13 +10,12 @@ module.exports = function (deployer, network, accounts) {
 
     deployer.then(async () => {
         // lend logger 
-        //await deployer.deploy(Logger, { gas: 3000000 })
+        // await deployer.deploy(Logger, { gas: 4000000 })    
+        // await deployer.deploy(CompoundProtocol, { gas: 4000000 })
+        // await deployer.deploy(DydxProtocol, { gas: 4000000 })
+        // await deployer.deploy(AaveProtocol, { gas: 4000000 })
        
-       //await deployer.deploy(CompoundProtocol, { gas: 3000000 })
-        //await deployer.deploy(DydxProtocol, { gas: 3000000 })
-        //await deployer.deploy(AaveProtocol, { gas: 3000000 })
-       
-       await deployer.deploy(ProtocolProxy, { gas: 3000000 })
+       await deployer.deploy(ProtocolProxy, { gas: 4000000 })
 
     });
 };

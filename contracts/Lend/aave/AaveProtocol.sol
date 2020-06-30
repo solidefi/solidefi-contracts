@@ -10,18 +10,18 @@ import "../../interfaces/ATokenInterface.sol";
 
 contract AaveProtocol is ProtocolInterface {
     //kovan
-    address public constant ADAI_ADDRESS = 0x58AD4cB396411B691A9AAb6F74545b2C5217FE6a;
-    address public constant AAVE_DAI_ADDRESS = 0xFf795577d9AC8bD7D90Ee22b6C1703490b6512FD;
-    address public constant LENDING_PROTO_ADDRESS_PROV = 0x506B0B2CF20FAA8f38a4E2B524EE43e1f4458Cc5;
-    address public constant LENDING_POOL = 0x580D4Fdc4BF8f9b5ae2fb9225D584fED4AD5375c;
-    address public constant LENDING_POOL_CORE = 0x95D1189Ed88B380E319dF73fF00E479fcc4CFa45;
+    // address public constant ADAI_ADDRESS = 0x58AD4cB396411B691A9AAb6F74545b2C5217FE6a;
+    // address public constant AAVE_DAI_ADDRESS = 0xFf795577d9AC8bD7D90Ee22b6C1703490b6512FD;
+    // address public constant LENDING_PROTO_ADDRESS_PROV = 0x506B0B2CF20FAA8f38a4E2B524EE43e1f4458Cc5;
+    // address public constant LENDING_POOL = 0x580D4Fdc4BF8f9b5ae2fb9225D584fED4AD5375c;
+    // address public constant LENDING_POOL_CORE = 0x95D1189Ed88B380E319dF73fF00E479fcc4CFa45;
 
     //mainnet
-    // address public constant ADAI_ADDRESS = 0xfC1E690f61EFd961294b3e1Ce3313fBD8aa4f85d;
-    // address public constant DAI_ADDRESS = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
-    // address public constant LENDING_PROTO_ADDRESS_PROV = 0x24a42fD28C976A61Df5D00D0599C34c4f90748c8;
-    // address public constant LENDING_POOL = 0x398eC7346DcD622eDc5ae82352F02bE94C62d119;
-    // address public constant LENDING_POOL_CORE = 0x3dfd23A6c5E8BbcFc9581d2E864a68feb6a076d3;
+    address public constant ADAI_ADDRESS = 0xfC1E690f61EFd961294b3e1Ce3313fBD8aa4f85d;
+    address public constant DAI_ADDRESS = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+    address public constant LENDING_PROTO_ADDRESS_PROV = 0x24a42fD28C976A61Df5D00D0599C34c4f90748c8;
+    address public constant LENDING_POOL = 0x398eC7346DcD622eDc5ae82352F02bE94C62d119;
+    address public constant LENDING_POOL_CORE = 0x3dfd23A6c5E8BbcFc9581d2E864a68feb6a076d3;
 
     ATokenInterface public aDaiContract;
     LendingPoolAddressesProviderInterface public provider;
@@ -42,11 +42,11 @@ contract AaveProtocol is ProtocolInterface {
      */
     function deposit(address _user, uint256 _amount) public override {
         require(
-            ERC20(AAVE_DAI_ADDRESS).transferFrom(_user, address(this), _amount),
+            ERC20(DAI_ADDRESS).transferFrom(_user, address(this), _amount),
             "Nothing to deposit"
         );
-        ERC20(AAVE_DAI_ADDRESS).approve(provider.getLendingPoolCore(), uint256(-1));
-        lendingPool.deposit(AAVE_DAI_ADDRESS, _amount, 0);
+        ERC20(DAI_ADDRESS).approve(provider.getLendingPoolCore(), uint256(-1));
+        lendingPool.deposit(DAI_ADDRESS, _amount, 0);
 
         aDaiContract.transfer(_user, aDaiContract.balanceOf(address(this)));
     }
@@ -61,6 +61,6 @@ contract AaveProtocol is ProtocolInterface {
 
         aDaiContract.redeem(_amount);
 
-        ERC20(AAVE_DAI_ADDRESS).transfer(_user, _amount);
+        ERC20(DAI_ADDRESS).transfer(_user, _amount);
     }
 }

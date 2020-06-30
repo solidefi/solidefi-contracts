@@ -29,17 +29,17 @@ import "../../interfaces/ERC20.sol";
 
 contract DydxProtocol is ProtocolInterface {
     //kovan
-    address public constant SOLO_MARGIN_ADDRESS = 0x4EC3570cADaAEE08Ae384779B0f3A45EF85289DE;
+    //address public constant SOLO_MARGIN_ADDRESS = 0x4EC3570cADaAEE08Ae384779B0f3A45EF85289DE;
     //mainnet
-    // address public constant SOLO_MARGIN_ADDRESS = 0x1E0447b19BB6EcFdAe1e4AE1694b0C3659614e4e;
+    address public constant SOLO_MARGIN_ADDRESS = 0x1E0447b19BB6EcFdAe1e4AE1694b0C3659614e4e;
 
     ISoloMargin public soloMargin;
     address public protocolProxy;
     // kovan saiMarketId = 1
-    uint256 daiMarketId = 1;
+    //uint256 daiMarketId = 1;
 
     //mainnet
-    //uint256 daiMarketId = 3;
+    uint256 daiMarketId = 3;
 
     constructor() public {
         soloMargin = ISoloMargin(SOLO_MARGIN_ADDRESS);
