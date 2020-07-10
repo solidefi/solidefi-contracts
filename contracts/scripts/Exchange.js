@@ -32,21 +32,25 @@ trading = (async () => {
   try {
    
      const cpk = await CPK.create({ web3 , ownerAccount:account.address});
-    
-  // console.log(Synthetix);
   const addressSUSD = await Synthetix.methods.synths(toBytes32('sUSD')).call();
-  //console.log(JSON.stringify(addressSUSD,  null, '\t'));
+
   const sUSDContract = new web3.eth.Contract(abiSynthetix,addressSUSD);
 
-  let txnDepot = await Depot.methods.synthsReceivedForEther(web3.utils.toHex((0.001*1e18))).call();
-console.log(JSON.stringify(txnDepot,  null, '\t'));
+   let txnDepot = await Depot.methods.synthsReceivedForEther(web3.utils.toHex((0.02*1e18))).call();
+   console.log(JSON.stringify(txnDepot,  null, '\t'));
 
-console.log()
+        await web3.eth.sendTransaction({
+          from: account.address,
+          to: '0x1bc2f452d95ffa5044a03c0804a379ed5b2bc0f5',
+          value: web3.utils.toHex(0.00001*1e18),
+          gasLimit: 999990
+        })
+ 
    const { promiEvent, hash } = await cpk.execTransactions([
        {
          operation: CPK.CALL,
          to: Depot.options.address,
-         value: web3.utils.toHex(0.001*1e18),                           
+         value: web3.utils.toHex(0.02*1e18),                           
          data: Depot.methods.exchangeEtherForSynths().encodeABI(),
        },
        {
@@ -58,13 +62,6 @@ console.log()
 
       ],{gasLimit: 999990});
       console.log(hash);
-
-      
-   
-
-
-
-  
   
 // /* quantity of sUSD received in exchange for a given quantity of ETH */
 // const txnDepot = await Depot.methods.synthsReceivedForEther(web3.utils.toHex((0.01*1e18))).call();
