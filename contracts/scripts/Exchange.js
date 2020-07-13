@@ -24,8 +24,12 @@ const { toBytes32 } = synthetix;
 
 const {  address: addressDepot} = synthetix.getTarget({ network, contract: 'Depot' });
 const  { abi: abiDepot }  = synthetix.getSource({ network, contract: 'Depot' });
-
 const Depot = new web3.eth.Contract(abiDepot,addressDepot);
+
+const {  address: addressDelegateApprovals} = synthetix.getTarget({ network, contract: 'DelegateApprovals' });
+const  { abi: abiDelegateApprovals }  = synthetix.getSource({ network, contract: 'DelegateApprovals' });
+const DelegateApprovals = new web3.eth.Contract(abiDelegateApprovals,addressDelegateApprovals);
+
 
 
 trading = (async () => {
@@ -36,16 +40,17 @@ trading = (async () => {
 
   const sUSDContract = new web3.eth.Contract(abiSynthetix,addressSUSD);
 
-   let txnDepot = await Depot.methods.synthsReceivedForEther(web3.utils.toHex((0.02*1e18))).call();
+   let txnDepot = await Depot.methods.synthsReceivedForEther(web3.utils.toHex((0.012*1e18))).call();
    console.log(JSON.stringify(txnDepot,  null, '\t'));
-
+   
+//with gnosis 
         await web3.eth.sendTransaction({
           from: account.address,
           to: '0x1bc2f452d95ffa5044a03c0804a379ed5b2bc0f5',
           value: web3.utils.toHex(0.00001*1e18),
           gasLimit: 999990
         })
- 
+  //if(!synthetix.isWaitingPeriod(src) 
    const { promiEvent, hash } = await cpk.execTransactions([
        {
          operation: CPK.CALL,
@@ -63,6 +68,7 @@ trading = (async () => {
       ],{gasLimit: 999990});
       console.log(hash);
   
+  //without gnosis batching 
 // /* quantity of sUSD received in exchange for a given quantity of ETH */
 // const txnDepot = await Depot.methods.synthsReceivedForEther(web3.utils.toHex((0.01*1e18))).call();
 // console.log(JSON.stringify(txnDepot,  null, '\t'));
