@@ -1,4 +1,4 @@
-
+const dotenv = require('dotenv').config();
 const synthetix = require('synthetix'); // nodejs
 //const ethers = require('ethers'); // nodejs
 const CPK = require('contract-proxy-kit')
@@ -10,10 +10,10 @@ const network = 'kovan';
 //const privateKey =  process.env.PRIV_KEY; // don't actually put a private key in code obviously
 //const signer = new ethers.Wallet(privateKey).connect(provider);
 
-web3 = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/11b9a3581295441e896cacb35648a968"));
+web3 = new Web3(new Web3.providers.HttpProvider(process.env.KOVAN_INFURA_ENDPOINT));
 
-account = web3.eth.accounts.privateKeyToAccount("0xE1DDD8AAFC215C39C5CD6D35BB6EECF5B323ABF78FE566BB7A94FCC7479101C7")
-web3.eth.accounts.wallet.add(account)
+account = web3.eth.accounts.privateKeyToAccount(process.env.PRIV_KEY);
+web3.eth.accounts.wallet.add(account);
 
 const  {address: addressSynthetix}  = synthetix.getTarget({ network, contract: 'ProxyERC20' });
 const  {abi : abiSynthetix}  = synthetix.getSource({ network, contract: 'Synthetix' });
