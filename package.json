@@ -20,9 +20,11 @@
   "homepage": "",
   "dependencies": {
     "chai": "^4.2.0",
+    "contract-proxy-kit": "^1.1.1",
     "dotenv": "^6.2.0",
+    "mocha": "^8.0.1",
     "openzeppelin-solidity": "^3.0.2",
-    "openzeppelin-test-helpers": "^0.4.2",
+    "openzeppelin-test-helpers": "^0.4.3",
     "solc": "^0.6.9",
     "truffle": "^5.1.29",
     "truffle-hdwallet-provider": "^1.0.2",

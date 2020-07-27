@@ -16,7 +16,7 @@ contract ProtocolProxy {
 
     //kovan
     address public constant LOGGER_ADDRESS = 0x43fD99B873D48bf1845B3CD073fA53CA3eaAec56;
-    address public constant SAVINGS_COMPOUND_ADDRESS = 0x28C48Aa83DA32a16640BeAb73aBB1deA14359cF7;
+    address public constant SAVINGS_COMPOUND_ADDRESS = 0xE3BB7Ef3f303208D2cd20207Bac69A8249C0d9E1;
     address public constant SAVINGS_DYDX_ADDRESS = 0xe73cC32bc17C58870701AD744eA4Ccf459ec9012;
     address public constant SAVINGS_AAVE_ADDRESS = 0x3C7717Ab97a85cFbf4eFce8eee8B1E218f8F3610;
     //constant kovan
@@ -28,6 +28,11 @@ contract ProtocolProxy {
     address public constant SOLO_MARGIN_ADDRESS = 0x4EC3570cADaAEE08Ae384779B0f3A45EF85289DE;
     address public constant COMPTROLLER_ADDRESS = 0x5eAe89DC1C671724A672ff0630122ee834098657;
     address public constant COMP_ADDRESS = 0x61460874a7196d6a22D1eE4922473664b3E95270;
+
+    address public constant USDC_ADDRESS = 0xb7a4F3E9097C08dA09517b5aB877F7a917224ede;
+    address public constant CUSDC_ADDRESS = 0x4a92E71227D294F041BD82dd8f78591B75140d63;
+    address public constant USDT_ADDRESS = 0x07de306FF27a2B630B1141956844eB1552B956B5;
+    address public constant CUSDT_ADDRESS = 0x3f0A0EA2f86baE6362CF9799B523BA06647Da018;
 
     // // mainnet
     // address public constant LOGGER_ADDRESS = 0xD943C08D37949dB925081D93B47bDa6c9F72BD1c;
@@ -45,42 +50,27 @@ contract ProtocolProxy {
 
     enum SavingsProtocol {Compound, Dydx, Aave}
 
-    //enum SavingsToken {DAI, USDC, USDT }
+    enum SavingsToken {DAI, USDC, USDT}
 
-    function deposit(SavingsProtocol _protocol, uint256 _amount) public {
-        _deposit(_protocol, _amount);
+    function deposit(
+        SavingsProtocol _protocol,
+        SavingsToken _coin,
+        uint256 _amount
+    ) public {
+        _deposit(_protocol, _coin, _amount);
 
         Logger(LOGGER_ADDRESS).logDeposit(msg.sender, uint8(_protocol), _amount, uint256(now));
     }
 
-    function withdraw(SavingsProtocol _protocol, uint256 _amount) public {
-        _withdraw(_protocol, _amount);
+    function withdraw(
+        SavingsProtocol _protocol,
+        SavingsToken _coin,
+        uint256 _amount
+    ) public {
+        _withdraw(_protocol, _coin, _amount);
 
         Logger(LOGGER_ADDRESS).logWithdraw(msg.sender, uint8(_protocol), _amount, uint256(now));
     }
-
-    // // main net
-    // function withdrawDai() public {
-    //     ERC20(DAI_ADDRESS).transfer(msg.sender, ERC20(DAI_ADDRESS).balanceOf(address(this)));
-    // }
-
-    // // kovan no need since it can be handled using web3
-    // function withdrawDai(SavingsProtocol _protocol) public {
-    //     if (_protocol == SavingsProtocol.Compound) {
-    //         ERC20(DAI_ADDRESS).transfer(msg.sender, ERC20(DAI_ADDRESS).balanceOf(address(this)));
-    //     }
-
-    //     if (_protocol == SavingsProtocol.Dydx) {
-    //         ERC20(SAI_ADDRESS).transfer(msg.sender, ERC20(DAI_ADDRESS).balanceOf(address(this)));
-    //     }
-
-    //     if (_protocol == SavingsProtocol.Aave) {
-    //         ERC20(AAVE_DAI_ADDRESS).transfer(
-    //             msg.sender,
-    //             ERC20(DAI_ADDRESS).balanceOf(address(this))
-    //         );
-    //     }
-    // }
 
     function getAddress(SavingsProtocol _protocol) public pure returns (address) {
         if (_protocol == SavingsProtocol.Compound) {
@@ -96,66 +86,58 @@ contract ProtocolProxy {
         }
     }
 
-    function _deposit(SavingsProtocol _protocol, uint256 _amount) internal {
-        /* due to different DAI on kovan*/
-        // if (_protocol == SavingsProtocol.Compound) {
-        //     if (_fromUser) {
-        //         ERC20(DAI_ADDRESS).transferFrom(msg.sender, address(this), _amount);
-        //     }
-        // }
-        // if (_protocol == SavingsProtocol.Dydx) {
-        //     if (_fromUser) {
-        //         ERC20(SAI_ADDRESS).transferFrom(msg.sender, address(this), _amount);
-        //     }
-        // }
-        // if (_protocol == SavingsProtocol.Aave) {
-        //     if (_fromUser) {
-        //         ERC20(AAVE_DAI_ADDRESS).transferFrom(msg.sender, address(this), _amount);
-        //     }
-        // }
+    function getTokenAddress(SavingsToken _coin) public pure returns (address, address) {
+        if (_coin == SavingsToken.DAI) {
+            return (DAI_ADDRESS, CDAI_ADDRESS);
+        }
 
-        // // main net
-        // if (
-        //     _protocol == SavingsProtocol.Compound ||
-        //     _protocol == SavingsProtocol.Dydx ||
-        //     _protocol == SavingsProtocol.Aave
-        // ) {
-        //     if (_fromUser) {
-        //         ERC20(DAI_ADDRESS).transferFrom(msg.sender, address(this), _amount);
-        //     }
-        // }
-        approveDeposit(_protocol);
+        if (_coin == SavingsToken.USDC) {
+            return (USDC_ADDRESS, CUSDC_ADDRESS);
+        }
 
-        ProtocolInterface(getAddress(_protocol)).deposit(address(this), _amount);
+        if (_coin == SavingsToken.USDT) {
+            return (USDT_ADDRESS, USDT_ADDRESS);
+        }
+    }
 
+    function _deposit(
+        SavingsProtocol _protocol,
+        SavingsToken _coin,
+        uint256 _amount
+    ) internal {
+        (address TOKEN, address CTOKEN) = getTokenAddress(_coin);
+        approveDeposit(_protocol, _coin);
+        ProtocolInterface(getAddress(_protocol)).deposit(address(this), _amount, TOKEN, CTOKEN);
         endAction(_protocol);
     }
 
-    function _withdraw(SavingsProtocol _protocol, uint256 _amount) public {
-        approveWithdraw(_protocol);
-
-        ProtocolInterface(getAddress(_protocol)).withdraw(address(this), _amount);
-
-        endAction(_protocol);
-        // To keep DAI in gnosis safe
-        // if (_toUser) {
-        //     withdrawDai();
-        // }
-    }
-
-    function swap(
-        SavingsProtocol _from,
-        SavingsProtocol _to,
+    function _withdraw(
+        SavingsProtocol _protocol,
+        SavingsToken _coin,
         uint256 _amount
     ) public {
-        _withdraw(_from, _amount);
+        (address TOKEN, address CTOKEN) = getTokenAddress(_coin);
+        approveWithdraw(_protocol, _coin);
 
-        uint256 amountToDeposit = ERC20(DAI_ADDRESS).balanceOf(address(this));
+        ProtocolInterface(getAddress(_protocol)).withdraw(address(this), _amount, TOKEN, CTOKEN);
 
-        _deposit(_to, amountToDeposit);
-
-        Logger(LOGGER_ADDRESS).logSwap(msg.sender, uint8(_from), uint8(_to), _amount);
+        endAction(_protocol);
     }
+
+    // function swap(
+    //     SavingsProtocol _from,
+    //     SavingsProtocol _to,
+    //     uint256 _amount,
+    //     SavingsToken _coin
+    // ) public {
+    //     _withdraw(_from, _amount);
+
+    //     uint256 amountToDeposit = ERC20(DAI_ADDRESS).balanceOf(address(this));
+
+    //     _deposit(_to, amountToDeposit, _coin);
+
+    //     Logger(LOGGER_ADDRESS).logSwap(msg.sender, uint8(_from), uint8(_to), _amount);
+    // }
 
     function endAction(SavingsProtocol _protocol) internal {
         if (_protocol == SavingsProtocol.Dydx) {
@@ -163,19 +145,11 @@ contract ProtocolProxy {
         }
     }
 
-    function approveDeposit(SavingsProtocol _protocol) internal {
-        // // main net
-        // if (_protocol == SavingsProtocol.Compound || _protocol == SavingsProtocol.Aave) {
-        //     ERC20(DAI_ADDRESS).approve(getAddress(_protocol), uint256(-1));
-        // }
-        // if (_protocol == SavingsProtocol.Dydx) {
-        //     ERC20(DAI_ADDRESS).approve(SOLO_MARGIN_ADDRESS, uint256(-1));
-        //     setDydxOperator(true);
-        // }
-
+    function approveDeposit(SavingsProtocol _protocol, SavingsToken _coin) internal {
         // kovan
+        (address TOKEN, ) = getTokenAddress(_coin);
         if (_protocol == SavingsProtocol.Compound) {
-            ERC20(DAI_ADDRESS).approve(getAddress(_protocol), uint256(-1));
+            ERC20(TOKEN).approve(getAddress(_protocol), uint256(-1));
         }
 
         if (_protocol == SavingsProtocol.Dydx) {
@@ -188,9 +162,10 @@ contract ProtocolProxy {
         }
     }
 
-    function approveWithdraw(SavingsProtocol _protocol) internal {
+    function approveWithdraw(SavingsProtocol _protocol, SavingsToken _coin) internal {
+        (, address CTOKEN) = getTokenAddress(_coin);
         if (_protocol == SavingsProtocol.Compound) {
-            ERC20(CDAI_ADDRESS).approve(getAddress(_protocol), uint256(-1));
+            ERC20(CTOKEN).approve(getAddress(_protocol), uint256(-1));
         }
 
         if (_protocol == SavingsProtocol.Dydx) {
@@ -211,12 +186,4 @@ contract ProtocolProxy {
 
         ISoloMargin(SOLO_MARGIN_ADDRESS).setOperators(operatorArgs);
     }
-
-    // function claimComp() public {
-    //     ComptrollerInterface(COMPTROLLER_ADDRESS).claimComp(address(this));
-    // }
-
-    // function withdrawCOMP() public {
-    //     ERC20(COMP_ADDRESS).transfer(msg.sender, ERC20(COMP_ADDRESS).balanceOf(address(this)));
-    // }
 }

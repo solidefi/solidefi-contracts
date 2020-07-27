@@ -13,17 +13,13 @@ contract CompoundProtocol is ProtocolInterface {
     // kovan
     // address public constant DAI_ADDRESS = 0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa;
     // address public constant CDAI_ADDRESS = 0xF0d0EB522cfa50B716B3b1604C4F0fA6f04376AD;
-    //address public constant OLD_CDAI_ADDRESS = 0xe7bc397DBd069fC7d0109C0636d06888bb50668c;
+    // address public constant OLD_CDAI_ADDRESS = 0xe7bc397DBd069fC7d0109C0636d06888bb50668c;
 
     //mainnet
-    address public constant DAI_ADDRESS = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
-    address public constant CDAI_ADDRESS = 0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643;
+    // address public constant DAI_ADDRESS = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+    // address public constant CDAI_ADDRESS = 0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643;
 
-    CTokenInterface public cDaiContract;
-
-    constructor() public {
-        cDaiContract = CTokenInterface(CDAI_ADDRESS);
-    }
+    CTokenInterface public cTokenContract;
 
     /**
      * @dev Deposit DAI to compound protocol return cDAI to user proxy wallet.
@@ -31,15 +27,19 @@ contract CompoundProtocol is ProtocolInterface {
      * @param _amount Amount of DAI.
      */
 
-    function deposit(address _user, uint256 _amount) public override {
-        require(
-            ERC20(DAI_ADDRESS).transferFrom(_user, address(this), _amount),
-            "Nothing to deposit"
-        );
+    function deposit(
+        address _user,
+        uint256 _amount,
+        address _token,
+        address _cToken
+    ) public override {
+        cTokenContract = CTokenInterface(_cToken);
 
-        ERC20(DAI_ADDRESS).approve(CDAI_ADDRESS, uint256(-1));
-        require(cDaiContract.mint(_amount) == 0, "Failed cDaiContract.mint");
-        cDaiContract.transfer(_user, cDaiContract.balanceOf(address(this)));
+        require(ERC20(_token).transferFrom(_user, address(this), _amount), "Nothing to deposit");
+
+        ERC20(_token).approve(_cToken, uint256(-1));
+        require(cTokenContract.mint(_amount) == 0, "Failed to mint");
+        cTokenContract.transfer(_user, cTokenContract.balanceOf(address(this)));
     }
 
     /**
@@ -47,17 +47,23 @@ contract CompoundProtocol is ProtocolInterface {
      *@param _user User proxy wallet address.
      *@param _amount Amount of DAI.
      */
-    function withdraw(address _user, uint256 _amount) public override {
+    function withdraw(
+        address _user,
+        uint256 _amount,
+        address _token,
+        address _cToken
+    ) public override {
+        cTokenContract = CTokenInterface(_cToken);
         require(
-            cDaiContract.transferFrom(_user, address(this), ERC20(CDAI_ADDRESS).balanceOf(_user)),
+            cTokenContract.transferFrom(_user, address(this), ERC20(_cToken).balanceOf(_user)),
             "Nothing to withdraw"
         );
-        cDaiContract.approve(CDAI_ADDRESS, uint256(-1));
-        require(cDaiContract.redeemUnderlying(_amount) == 0, "Reedem Failed");
-        uint256 cDaiBalance = cDaiContract.balanceOf(address(this));
+        cTokenContract.approve(_cToken, uint256(-1));
+        require(cTokenContract.redeemUnderlying(_amount) == 0, "Reedem Failed");
+        uint256 cDaiBalance = cTokenContract.balanceOf(address(this));
         if (cDaiBalance > 0) {
-            cDaiContract.transfer(_user, cDaiBalance);
+            cTokenContract.transfer(_user, cDaiBalance);
         }
-        ERC20(DAI_ADDRESS).transfer(_user, _amount);
+        ERC20(_token).transfer(_user, _amount);
     }
 }
