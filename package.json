@@ -26,6 +26,7 @@
     "openzeppelin-solidity": "^3.0.2",
     "openzeppelin-test-helpers": "^0.4.3",
     "solc": "^0.6.9",
+    "synthetix": "^2.26.1",
     "truffle": "^5.1.29",
     "truffle-hdwallet-provider": "^1.0.2",
     "truffle-plugin-verify": "^0.3.3"
