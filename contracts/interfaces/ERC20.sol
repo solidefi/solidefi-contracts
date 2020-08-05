@@ -21,4 +21,5 @@ interface ERC20 {
     function decimals() external view returns (uint256 digits);
 
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
+    event Transfer(address indexed _src, address indexed _dst, uint256 _amount);
 }

@@ -1,7 +1,7 @@
 {
-  "name": "monoblocdefi",
+  "name": "solidefi",
   "version": "1.0.0",
-  "description": "",
+  "description": "Implementations of smart contracts for Solidefi",
   "directories": {
     "test": "test"
   },
@@ -13,7 +13,7 @@
     "url": ""
   },
   "author": "surbhi",
-  "license": "ISC",
+  "license": "GPL-3.0-only",
   "bugs": {
     "url": ""
   },
@@ -25,6 +25,8 @@
     "mocha": "^8.0.1",
     "openzeppelin-solidity": "^3.0.2",
     "openzeppelin-test-helpers": "^0.4.3",
+    "prettier": "^2.0.5",
+    "prettier-plugin-solidity": "^1.0.0-alpha.54",
     "solc": "^0.6.9",
     "synthetix": "^2.26.1",
     "truffle": "^5.1.29",

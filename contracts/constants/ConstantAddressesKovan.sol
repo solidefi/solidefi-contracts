@@ -1,0 +1,34 @@
+pragma solidity >=0.6.0;
+
+contract ConstantAddressesKovan {
+    //Rinkeby
+    // address public constant DAI_ADDRESS = 0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa;
+    // address public constant SAVINGS_COMPOUND_ADDRESS = 0x21182Be016C37B0CFD70Bf4Fbbe8B983c365D60E;
+
+    //kovan
+    address public constant LOGGER_ADDRESS = 0x43fD99B873D48bf1845B3CD073fA53CA3eaAec56;
+    address public constant SAVINGS_COMPOUND_ADDRESS = 0x83021914EcFaB9c1358c62aaa340644aBB372f84;
+    address public constant SAVINGS_DYDX_ADDRESS = 0xe73cC32bc17C58870701AD744eA4Ccf459ec9012;
+    address public constant SAVINGS_AAVE_ADDRESS = 0x7604973aeDB53cC5b4b491A01D96a0ce5E3Ac9D6;
+
+    // aave
+    address public constant AAVE_DAI_ADDRESS = 0xFf795577d9AC8bD7D90Ee22b6C1703490b6512FD;
+    address public constant ADAI_ADDRESS = 0x58AD4cB396411B691A9AAb6F74545b2C5217FE6a;
+    address public constant AAVE_USDC_ADDRESS = 0xe22da380ee6B445bb8273C81944ADEB6E8450422;
+    address public constant AAVE_AUSDC_ADDRESS = 0x02F626c6ccb6D2ebC071c068DC1f02Bf5693416a;
+    address public constant AAVE_USDT_ADDRESS = 0x13512979ADE267AB5100878E2e0f485B568328a4;
+    address public constant AAVE_AUSDT_ADDRESS = 0xA01bA9fB493b851F4Ac5093A324CB081A909C34B;
+    //dydx
+    // address public constant SOLO_MARGIN_ADDRESS = 0x4EC3570cADaAEE08Ae384779B0f3A45EF85289DE;
+    address public constant SAI_ADDRESS = 0xC4375B7De8af5a38a93548eb8453a498222C4fF2;
+
+    //Compound
+    address public constant COMPTROLLER_ADDRESS = 0x5eAe89DC1C671724A672ff0630122ee834098657;
+    address public constant COMP_ADDRESS = 0x61460874a7196d6a22D1eE4922473664b3E95270;
+    address public constant DAI_ADDRESS = 0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa;
+    address public constant CDAI_ADDRESS = 0xF0d0EB522cfa50B716B3b1604C4F0fA6f04376AD;
+    address public constant USDC_ADDRESS = 0xb7a4F3E9097C08dA09517b5aB877F7a917224ede;
+    address public constant CUSDC_ADDRESS = 0x4a92E71227D294F041BD82dd8f78591B75140d63;
+    address public constant USDT_ADDRESS = 0x07de306FF27a2B630B1141956844eB1552B956B5;
+    address public constant CUSDT_ADDRESS = 0x3f0A0EA2f86baE6362CF9799B523BA06647Da018;
+}
