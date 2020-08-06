@@ -8,7 +8,7 @@ contract ConstantAddressesKovan {
     //kovan
     address public constant LOGGER_ADDRESS = 0x43fD99B873D48bf1845B3CD073fA53CA3eaAec56;
     address public constant SAVINGS_COMPOUND_ADDRESS = 0x83021914EcFaB9c1358c62aaa340644aBB372f84;
-    address public constant SAVINGS_DYDX_ADDRESS = 0xe73cC32bc17C58870701AD744eA4Ccf459ec9012;
+    address public constant SAVINGS_DYDX_ADDRESS = 0x5B1C073103cdA71CcDb9Cf0D786EDd2D5A5aed8d;
     address public constant SAVINGS_AAVE_ADDRESS = 0x7604973aeDB53cC5b4b491A01D96a0ce5E3Ac9D6;
 
     // aave

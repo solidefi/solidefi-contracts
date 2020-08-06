@@ -4,7 +4,7 @@ const { ZERO_ADDRESS } = constants;
 const CPK = require("contract-proxy-kit")
 const ProtocolProxy = artifacts.require('ProtocolProxy');
 const Token = artifacts.require("ERC20");
-//const ISoloMargin = artifacts.require("ISoloMargin")
+const ISoloMargin = artifacts.require("ISoloMargin")
 const CTokenInterface = artifacts.require("CTokenInterface");
 const ATokenInterface = artifacts.require("ATokenInterface");
 //const ITokenInterface = artifacts.require("ITokenInterface")
@@ -43,7 +43,7 @@ contract('ProtocolProxy', function (accounts) {
     });
 
     async function deposit(protocolEnum,tokenEnum, amount) {
-        const{ hash } = await cpk.execTransactions([
+        const{  hash } =  await cpk.execTransactions([
             {
               operation: CPK.DELEGATECALL,
               to: protocolProxy.address,
@@ -51,31 +51,27 @@ contract('ProtocolProxy', function (accounts) {
               data: protocolProxy.contract.methods.deposit(protocolEnum,tokenEnum, amount).encodeABI(),  
             },    
           ],
-          { gasLimit:999990, from:accounts[6]},
+          { gasLimit:999999, from:accounts[6]},
+          ); 
+          console.log(hash.toString())
+          return hash;
+        
+    }
+    async function withdraw(protocolEnum, tokenEnum ,amount) {
+        const{  hash } = await cpk.execTransactions([
+            {
+              operation: CPK.DELEGATECALL,
+              to: protocolProxy.address,
+              value: 0,
+              data: protocolProxy.contract.methods.withdraw(protocolEnum, tokenEnum,amount).encodeABI(),  
+            },    
+          ],
+          { gasLimit:999999, from:accounts[6] },
           ); 
         return hash;
     }
-    // async function withdraw(protocolEnum, amount) {
-    //     const{ promiEvent, hash } = await cpk.execTransactions([
-    //         {
-    //           operation: CPK.DELEGATECALL,
-    //           to: protocolProxy.address,
-    //           value: 0,
-    //           data: protocolProxy.contract.methods.withdraw(protocolEnum, tokenEnum,amount).encodeABI(),  
-    //         },    
-    //       ],
-    //       { gasLimit:899990 },
-    //       ); 
-    //     return hash;
-    // }
 
-    // async function swap(protocolEnumFrom, protocolEnumTo, amount) {
-    //     const data = web3.eth.abi.encodeFunctionCall(getAbiFunction(SavingsProxy, 'swap'), [protocolEnumFrom, protocolEnumTo, amount]);
-    //     const tx = await dsProxy.methods['execute(address,bytes)'](savingsProxy.address, data);
-
-    //     return tx;
-    // }
-
+   
     async function getTokenBalance(address, account) {
         let token = await Token.at(address, {from: accounts[6]})
 
@@ -85,7 +81,7 @@ contract('ProtocolProxy', function (accounts) {
     }
 
     async function getDaiBalance(account) {
-        let daiAddress = await protocolProxy.DAI_ADDRESS({from: accounts[6]});
+        let daiAddress = await protocolProxy.SAI_ADDRESS({from: accounts[6]});
 
         let balance = await getTokenBalance(daiAddress, account, {from: accounts[6]})
 
@@ -148,15 +144,15 @@ contract('ProtocolProxy', function (accounts) {
 
     
 
-    // async function getDydxBalance(account) {
-    //     let soloMarginAddress = await savingsProxy.SOLO_MARGIN_ADDRESS();
-    //     let soloMargin = await ISoloMargin.at(soloMarginAddress)
-    //     let balance = await soloMargin.getAccountBalances([account, 0])
+    async function getDydxBalance(account) {
+        let soloMarginAddress = await protocolProxy.SOLO_MARGIN_ADDRESS();
+        let soloMargin = await ISoloMargin.at(soloMarginAddress)
+        let balance = await soloMargin.getAccountBalances([account, 0])
 
-    //     let weiBalance =  balance[2][1]['value'].toString();
+        let weiBalance =  balance[2][1]['value'].toString();
 
-    //     return weiBalance
-    // }
+        return weiBalance
+    }
 
     async function advanceMultipleBlocks(num) {
         for (var i = 0; i < num; i++) {
@@ -184,7 +180,7 @@ contract('ProtocolProxy', function (accounts) {
             cTokenBalance  = await getInterestBearingTokenBalance(cpk.address, DAI_ENUM, COMPOUND_ENUM, {from: accounts[6]} )
             console.log("cDAI balance:", cTokenBalance)
              tokenBalance = await getDaiBalance(cpk.address, {from: accounts[6]})
-            console.log("dai balance:", tokenBalance)
+            console.log("dydx dai balance:", tokenBalance)
             cTokenBalance  = await getInterestBearingTokenBalance(cpk.address, USDC_ENUM, COMPOUND_ENUM, {from: accounts[6]})
             console.log("cUSDC balance:", cTokenBalance)
              tokenBalance = await getUsdcBalance(cpk.address, {from: accounts[6]})
@@ -194,37 +190,38 @@ contract('ProtocolProxy', function (accounts) {
              tokenBalance = await getUsdtBalance(cpk.address, {from: accounts[6]})
             console.log("USDT balance:", tokenBalance)
            
+           
         });
     });
 
     describe('Depositing', function () {
-        // it('should be able to deposit DAI to Compound', async function () {
-        //     try {
+        it('should be able to deposit DAI to Compound', async function () {
+            try {
                
-        //         let tx = await deposit(COMPOUND_ENUM, DAI_ENUM, web3.utils.toWei('0.0001', 'ether'), {from:accounts[6]})
-        //          console.log(tx);
-        //           let balance = await getInterestBearingTokenBalance(cpk.address, DAI_ENUM, COMPOUND_ENUM)
+                let tx = await deposit(COMPOUND_ENUM, DAI_ENUM, web3.utils.toWei('0.0001', 'ether'), {from:accounts[6]})
+                 console.log(tx);
+                  let balance = await getInterestBearingTokenBalance(cpk.address, DAI_ENUM, COMPOUND_ENUM)
 
-        //          console.log("CDAI Balance :", balance.toString())
+                 console.log("CDAI Balance :", balance.toString())
 
-        //     } catch(err) {
-        //         assert.equal(1, 2, err)
-        //     }
-        // });
-    //    it('should be able to deposit USDC to Compound', async function () {
-    //         try {
+            } catch(err) {
+                assert.equal(1, 2, err)
+            }
+        });
+       it('should be able to deposit USDC to Compound', async function () {
+            try {
                
-    //             let tx = await deposit(COMPOUND_ENUM, USDC_ENUM, web3.utils.toWei('0.0001', 'mwei'), {from: accounts[6]})
+                let tx = await deposit(COMPOUND_ENUM, USDC_ENUM, web3.utils.toWei('0.0001', 'mwei'), {from: accounts[6]})
 
-    //              let balance = await getInterestBearingTokenBalance(cpk.address, USDC_ENUM, COMPOUND_ENUM)
+                 let balance = await getInterestBearingTokenBalance(cpk.address, USDC_ENUM, COMPOUND_ENUM)
 
-    //             console.log("CUSDC Balance :", balance.toString())
+                console.log("CUSDC Balance :", balance.toString())
 
-    //         } catch(err) {
+            } catch(err) {
                 
-    //             assert.equal(1, 2, err)
-    //         }
-    //     });
+                assert.equal(1, 2, err)
+            }
+        });
         it('should be able to deposit USDT to Compound', async function () {
             try {
                
@@ -238,227 +235,93 @@ contract('ProtocolProxy', function (accounts) {
                 assert.equal(1, 2, err)
             }
         });
-        // it('should be able to deposit DAI to Aave', async function () {
-        //     try {
+        it('should be able to deposit DAI to Aave', async function () {
+            try {
                
-        //         let tx = await deposit(AAVE_ENUM, DAI_ENUM, web3.utils.toWei('0.0001', 'ether'))
+                let tx = await deposit(AAVE_ENUM, DAI_ENUM, web3.utils.toWei('0.0001', 'ether'))
 
-        //          let balance = await getInterestBearingTokenBalance(cpk.address, DAI_ENUM, AAVE_ENUM)
+                 let balance = await getInterestBearingTokenBalance(cpk.address, DAI_ENUM, AAVE_ENUM)
 
-        //         console.log("ADAI Balance :", balance.toString())
+                console.log("ADAI Balance :", balance.toString())
 
-        //     } catch(err) {
-        //         assert.equal(1, 2, err)
-        //     }
-        // });
-        // it('should be able to deposit USDC to Aave', async function () {
-        //     try {
+            } catch(err) {
+                assert.equal(1, 2, err)
+            }
+        });
+        it('should be able to deposit USDC to Aave', async function () {
+            try {
                
-        //         let tx = await deposit(AAVE_ENUM, USDC_ENUM, web3.utils.toWei('0.0001', 'mwei'))
+                let tx = await deposit(AAVE_ENUM, USDC_ENUM, web3.utils.toWei('0.0001', 'mwei'))
 
-        //          let balance = await getInterestBearingTokenBalance(cpk.address, USDC_ENUM, AAVE_ENUM)
+                 let balance = await getInterestBearingTokenBalance(cpk.address, USDC_ENUM, AAVE_ENUM)
 
-        //         console.log("AUSDC Balance :", balance.toString())
+                console.log("AUSDC Balance :", balance.toString())
 
-        //     } catch(err) {
-        //         assert.equal(1, 2, err)
-        //     }
-        // });
-        // it('should be able to deposit USDT to Aave', async function () {
-        //     try {
+            } catch(err) {
+                assert.equal(1, 2, err)
+            }
+        });
+        it('should be able to deposit USDT to Aave', async function () {
+            try {
                
-        //         let tx = await deposit(AAVE_ENUM, USDT_ENUM, web3.utils.toWei('0.0001', 'mwei'))
+                let tx = await deposit(AAVE_ENUM, USDT_ENUM, web3.utils.toWei('0.0001', 'mwei'))
 
-        //          let balance = await getInterestBearingTokenBalance(cpk.address, USDT_ENUM, AAVE_ENUM)
+                 let balance = await getInterestBearingTokenBalance(cpk.address, USDT_ENUM, AAVE_ENUM)
 
-        //         console.log("AUSDT Balance :", balance.toString())
+                console.log("AUSDT Balance :", balance.toString())
 
-        //     } catch(err) {
-        //         assert.equal(1, 2, err)
-        //     }
-        // });
+            } catch(err) {
+                assert.equal(1, 2, err)
+            }
+        });
       
     
-        // it('should be able to deposit DAI to Dydx', async function () {
-        //     try {
-        //         let tx = await deposit(DYDX_ENUM, web3.utils.toWei('1', 'ether'))
+        it('should be able to deposit DAI to Dydx', async function () {
+            try {
+              let tx =  await deposit(DYDX_ENUM, DAI_ENUM ,web3.utils.toWei('0.001', 'ether'), {from:accounts[6]})
 
-        //         let balance = await getDydxBalance(dsProxy.address)
+                let balance = await getDydxBalance(cpk.address)
 
-        //         console.log("Dydx balance:", balance.toString())
+                console.log("Dydx balance:", balance)
 
-        //     } catch(err) {
-        //         assert.equal(1, 2, err)
-        //     }
-        // });
-
-        
+            } catch(err) {
+                // assert.equal(1, 2, err)
+                console.log(err)
+            }
+        });
     });
 
-    // describe('Swap', function () {
-    //     it('should be able to swap DAI from Compound to Dydx', async function () {
-    //         try {
-    //             let depositTx = await deposit(COMPOUND_ENUM, web3.utils.toWei('1', 'ether'));
+   
+    describe('Withdrawing', function () {
 
-    //             let cbalanceBefore = await getCompoundBalance(dsProxy.address)
-    //             let dbalanceBefore = await getDydxBalance(dsProxy.address)
+        
+        it('should be able to withdraw DAI to Compound', async function () {
+            try {
+                let cDaiBalance = await getInterestBearingTokenBalance(cpk.address, DAI_ENUM, COMPOUND_ENUM, {from:accounts[6]});
 
-    //             let swapTx = await swap(COMPOUND_ENUM, DYDX_ENUM, cbalanceBefore)
+                let balanceBefore = await getInterestBearingTokenBalance(cpk.address, DAI_ENUM, COMPOUND_ENUM, {from:accounts[6]});
+                if (balanceBefore == "0") {
+                    console.log("balance is zero, depositing  dai");
+                    await deposit(COMPOUND_ENUM, DAI_ENUM, web3.utils.toWei('0.0001', 'ether'), {from:accounts[6]});
+                }
 
-    //             let cbalanceAfter = await getCompoundBalance(dsProxy.address)
-    //             let dbalanceAfter = await getDydxBalance(dsProxy.address)
+                const tx = await withdraw(COMPOUND_ENUM, DAI_ENUM,cDaiBalance, {from:accounts[6]});
 
-    //             console.log("compound")
-    //             console.log(cbalanceBefore)
-    //             console.log(cbalanceAfter)
-    //             console.log("dydx")
-    //             console.log(dbalanceBefore)
-    //             console.log(dbalanceAfter)
-    //         } catch(err) {
-    //             assert.equal(1, 2, err)
-    //         }
-    //     });
-    //     it('should be able to swap DAI from Compound to Fulcrum', async function () {
-    //         try {
-    //             let depositTx = await deposit(COMPOUND_ENUM, web3.utils.toWei('1', 'ether'));
+                let balanceAfter = await getInterestBearingTokenBalance(cpk.address, DAI_ENUM, COMPOUND_ENUM, {from:accounts[6]});
 
-    //             let cbalanceBefore = await getCompoundBalance(dsProxy.address)
-    //             let fbalanceBefore = await getFulcrumBalance(dsProxy.address)
-
-    //             let swapTx = await swap(COMPOUND_ENUM, FULCRUM_ENUM, cbalanceBefore)
-
-    //             let cbalanceAfter = await getCompoundBalance(dsProxy.address)
-    //             let fbalanceAfter = await getFulcrumBalance(dsProxy.address)
-
-    //             console.log("compound")
-    //             console.log(cbalanceBefore)
-    //             console.log(cbalanceAfter)
-    //             console.log("fulcrum")
-    //             console.log(fbalanceBefore)
-    //             console.log(fbalanceAfter)
-    //         } catch(err) {
-    //             assert.equal(1, 2, err)
-    //         }
-    //     });
-    //     it('should be able to swap DAI from Dydx to Compound', async function () {
-    //         try {
-    //             let depositTx = await deposit(DYDX_ENUM, web3.utils.toWei('1', 'ether'));
-
-    //             let cbalanceBefore = await getCompoundBalance(dsProxy.address)
-    //             let dbalanceBefore = await getDydxBalance(dsProxy.address)
-
-    //             let swapTx = await swap(DYDX_ENUM, COMPOUND_ENUM, dbalanceBefore)
-
-    //             let cbalanceAfter = await getCompoundBalance(dsProxy.address)
-    //             let dbalanceAfter = await getDydxBalance(dsProxy.address)
-
-    //             console.log("dydx")
-    //             console.log(dbalanceBefore)
-    //             console.log(dbalanceAfter)
-    //             console.log("compound")
-    //             console.log(cbalanceBefore)
-    //             console.log(cbalanceAfter)
-    //         } catch(err) {
-    //             assert.equal(1, 2, err)
-    //         }
-    //     });
-    //     it('should be able to swap DAI from Dydx to Fulcrum', async function () {
-    //         try {
-    //             let depositTx = await deposit(DYDX_ENUM, web3.utils.toWei('1', 'ether'));
-
-    //             let fbalanceBefore = await getFulcrumBalance(dsProxy.address)
-    //             let dbalanceBefore = await getDydxBalance(dsProxy.address)
-
-    //             let swapTx = await swap(DYDX_ENUM, FULCRUM_ENUM, dbalanceBefore)
-
-    //             let fbalanceAfter = await getFulcrumBalance(dsProxy.address)
-    //             let dbalanceAfter = await getDydxBalance(dsProxy.address)
-
-    //             console.log("dydx")
-    //             console.log(dbalanceBefore)
-    //             console.log(dbalanceAfter)
-    //             console.log("fulcrum")
-    //             console.log(fbalanceBefore)
-    //             console.log(fbalanceAfter)
-    //         } catch(err) {
-    //             assert.equal(1, 2, err)
-    //         }
-    //     });
-    //     it('should be able to swap DAI from Fulcrum to Compound', async function () {
-    //         try {
-    //             let depositTx = await deposit(FULCRUM_ENUM, web3.utils.toWei('1', 'ether'));
-
-    //             let fbalanceBefore = await getFulcrumBalance(dsProxy.address)
-    //             let cbalanceBefore = await getCompoundBalance(dsProxy.address)
-
-    //             let swapTx = await swap(FULCRUM_ENUM, COMPOUND_ENUM, fbalanceBefore)
-
-    //             let fbalanceAfter = await getFulcrumBalance(dsProxy.address)
-    //             let cbalanceAfter = await getCompoundBalance(dsProxy.address)
-
-    //             console.log("fulcrum")
-    //             console.log(fbalanceBefore)
-    //             console.log(fbalanceAfter)
-    //             console.log("compound")
-    //             console.log(cbalanceBefore)
-    //             console.log(cbalanceAfter)
-    //         } catch(err) {
-    //             assert.equal(1, 2, err)
-    //         }
-    //     });
-    //     it('should be able to swap DAI from Fulcrum to Dydx', async function () {
-    //         try {
-    //             let depositTx = await deposit(FULCRUM_ENUM, web3.utils.toWei('1', 'ether'));
-
-    //             let fbalanceBefore = await getFulcrumBalance(dsProxy.address)
-    //             let dbalanceBefore = await getDydxBalance(dsProxy.address)
-
-    //             let swapTx = await swap(FULCRUM_ENUM, DYDX_ENUM, fbalanceBefore)
-
-    //             let fbalanceAfter = await getFulcrumBalance(dsProxy.address)
-    //             let dbalanceAfter = await getDydxBalance(dsProxy.address)
-
-    //             console.log("fulcrum")
-    //             console.log(fbalanceBefore)
-    //             console.log(fbalanceAfter)
-    //             console.log("dydx")
-    //             console.log(dbalanceBefore)
-    //             console.log(dbalanceAfter)
-    //         } catch(err) {
-    //             assert.equal(1, 2, err)
-    //         }
-    //     });
-    // });
-
-    // describe('Withdrawing', function () {
-    //     it('should be able to withdraw DAI to Compound', async function () {
-    //         try {
-    //             let cDaiBalance = await getCompoundBalance(cpk.address)
-
-    //             let balanceBefore = await getCompoundBalance(cpk.address);
-
-    //             if (balanceBefore != "0") {
-    //                 console.log("balance is zero, depositing 1 dai")
-    //               //  await depost(COMPOUND_ENUM, web3.utils.toWei('0.0001', 'ether'))
-    //             }
-
-    //             const tx = await withdraw(COMPOUND_ENUM, cDaiBalance)
-
-    //             let balanceAfter = await getCompoundBalance(cpk.address);
-
-    //             console.log("compound")
-    //             console.log(balanceBefore)
-    //             console.log(balanceAfter)
-    //         } catch(err) {
-    //             assert.equal(1, 2, err)
-    //         }
-    //     });
+                console.log("compound")
+                console.log(balanceBefore)
+                console.log(balanceAfter)
+            } catch(err) {
+                assert.equal(1, 2, err)
+            }
+        });
 
         // it('should be able to withdraw DAI to Dydx', async function () {
         //     try {
-        //         let weiBalance =  await getDydxBalance(dsProxy.address);
+        //         let weiBalance =  await getDydxBalance(cpk.address);
 
-        //         let balanceBefore = await getDydxBalance(dsProxy.address);
+        //         let balanceBefore = await getDydxBalance(cpk.address);
 
         //         if (balanceBefore != "0") {
         //             console.log("balance is zero, depositing 1 dai")
@@ -467,7 +330,7 @@ contract('ProtocolProxy', function (accounts) {
 
         //         let tx = await withdraw(DYDX_ENUM, weiBalance)
 
-        //         let balanceAfter = await getDydxBalance(dsProxy.address);
+        //         let balanceAfter = await getDydxBalance(cpk.address);
 
         //         console.log("dydx")
         //         console.log(balanceBefore.toString())
@@ -478,41 +341,8 @@ contract('ProtocolProxy', function (accounts) {
         //     }
         // });
 
-        // it('should be able to withdraw DAI to Fulcrum', async function () {
-        //     try {
-        //         let iDaiBalance = await getFulcrumBalance(dsProxy.address)
-
-        //         let balanceBefore = await getFulcrumBalance(dsProxy.address);
-
-        //         if (balanceBefore == "0") {
-        //             console.log("balance is zero, depositing 1 dai")
-        //             await depost(FULCRUM_ENUM, web3.utils.toWei('1', 'ether'))
-        //         }
-
-        //         let tx = await withdraw(FULCRUM_ENUM, iDaiBalance);
-
-        //         let balanceAfter = await getFulcrumBalance(dsProxy.address);
-
-        //         console.log("Fulcrum")
-        //         console.log(balanceBefore.toString())
-        //         console.log(balanceAfter.toString())
-
-        //     } catch(err) {
-        //         assert.equal(1, 2, err)
-        //     }
-        // });
-
-    //     it('should be able to return funds to user', async function() {
-    //         try {
-    //             const data = web3.eth.abi.encodeFunctionCall(getAbiFunction(SavingsProxy, 'withdrawDai'), []);
-    //             const tx = await dsProxy.methods['execute(address,bytes)'](savingsProxy.address, data);
-
-    //             let myBal = await daiToken.balanceOf(accounts[0])
-    //             console.log("My dai balance:", myBal.toString())
-    //         } catch(err) {
-    //             assert.equal(1, 2, err)
-    //         }
-    //     });
-    //  });
+        
+       
+     });
 
 });

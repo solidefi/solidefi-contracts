@@ -81,7 +81,7 @@ contract ProtocolProxy is ConstantAddresses, DydxProtocol {
             }
 
             if (_coin == SavingsToken.USDT) {
-                return (USDT_ADDRESS, USDT_ADDRESS);
+                return (USDT_ADDRESS, CUSDT_ADDRESS);
             }
         }
         if (_protocol == SavingsProtocol.Aave) {
@@ -110,7 +110,7 @@ contract ProtocolProxy is ConstantAddresses, DydxProtocol {
         if (_protocol == SavingsProtocol.Dydx) {
             uint256 _inputMarketId;
             if (_coin == SavingsToken.DAI) {
-                _inputMarketId = 1;
+                _inputMarketId = 3;
             } else {
                 _inputMarketId = 2;
             }
@@ -132,7 +132,7 @@ contract ProtocolProxy is ConstantAddresses, DydxProtocol {
         SavingsProtocol _protocol,
         SavingsToken _coin,
         uint256 _amount
-    ) public {
+    ) internal {
         approveWithdraw(_protocol, _coin);
         if (_protocol == SavingsProtocol.Dydx) {
             uint256 _inputMarketId;
@@ -154,20 +154,21 @@ contract ProtocolProxy is ConstantAddresses, DydxProtocol {
         }
     }
 
-    // function swap(
-    //     SavingsProtocol _from,
-    //     SavingsProtocol _to,
-    //     uint256 _amount,
-    //     SavingsToken _coin
-    // ) public {
-    //     _withdraw(_from, _amount);
+    function swap(
+        SavingsProtocol _from,
+        SavingsProtocol _to,
+        uint256 _amount,
+        SavingsToken _coin
+    ) public {
+        (address TOKEN, ) = getTokenAddress(_coin, _from);
+        _withdraw(_from, _coin, _amount);
 
-    //     uint256 amountToDeposit = ERC20(DAI_ADDRESS).balanceOf(address(this));
+        uint256 amountToDeposit = ERC20(TOKEN).balanceOf(address(this));
 
-    //     _deposit(_to, amountToDeposit, _coin);
+        _deposit(_to, _coin, amountToDeposit);
 
-    //     Logger(LOGGER_ADDRESS).logSwap(msg.sender, uint8(_from), uint8(_to), _amount);
-    // }
+        Logger(LOGGER_ADDRESS).logSwap(msg.sender, uint8(_from), uint8(_to), _amount);
+    }
 
     function endAction(SavingsProtocol _protocol) internal {
         if (_protocol == SavingsProtocol.Dydx) {
