@@ -32,7 +32,7 @@ contract('ProtocolProxy', function (accounts) {
 
     beforeEach(async function () {
         protocolProxy = await ProtocolProxy.deployed()
-         cpk = await CPK.create({ web3 , ownerAccount:accounts[6]});
+        cpk = await CPK.create({ web3 , ownerAccount:accounts[6]});
         let daiAddress = await protocolProxy.DAI_ADDRESS();
         daiToken = await Token.at(daiAddress);
         let usdcAddress = await protocolProxy.USDC_ADDRESS();
@@ -54,8 +54,7 @@ contract('ProtocolProxy', function (accounts) {
           { gasLimit:999999, from:accounts[6]},
           ); 
           console.log(hash.toString())
-          return hash;
-        
+          return hash;       
     }
     async function withdraw(protocolEnum, tokenEnum ,amount) {
         const{  hash } = await cpk.execTransactions([

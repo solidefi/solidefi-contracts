@@ -2,6 +2,8 @@
 pragma solidity >=0.6.0;
 
 interface ERC20 {
+     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
+    event Transfer(address indexed _src, address indexed _dst, uint256 _amount);
     function totalSupply() external view returns (uint256 supply);
 
     function balanceOf(address _owner) external view returns (uint256 balance);
@@ -18,8 +20,7 @@ interface ERC20 {
 
     function allowance(address _owner, address _spender) external view returns (uint256 remaining);
 
-    function decimals() external view returns (uint256 digits);
+    // function decimals() external view returns (uint256 digits);
 
-    event Approval(address indexed _owner, address indexed _spender, uint256 _value);
-    event Transfer(address indexed _src, address indexed _dst, uint256 _amount);
+   
 }
