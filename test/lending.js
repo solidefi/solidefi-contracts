@@ -32,7 +32,7 @@ contract('ProtocolProxy', function (accounts) {
 
     beforeEach(async function () {
         protocolProxy = await ProtocolProxy.deployed()
-        cpk = await CPK.create({ web3 , ownerAccount:accounts[6]});
+        cpk = await CPK.create({ web3 , ownerAccount:accounts[7]});
         let daiAddress = await protocolProxy.DAI_ADDRESS();
         daiToken = await Token.at(daiAddress);
         let usdcAddress = await protocolProxy.USDC_ADDRESS();
@@ -51,7 +51,7 @@ contract('ProtocolProxy', function (accounts) {
               data: protocolProxy.contract.methods.deposit(protocolEnum,tokenEnum, amount).encodeABI(),  
             },    
           ],
-          { gasLimit:999999, from:accounts[6]},
+          { gasLimit:999999, from:accounts[7]},
           ); 
           console.log(hash.toString())
           return hash;       
@@ -173,8 +173,8 @@ contract('ProtocolProxy', function (accounts) {
         it('should read balances', async function () {
             console.log("protocolProxy address: ", protocolProxy.address)
             console.log("gnosis safe address:", cpk.address)
-            // let dydxBalance = await getDydxBalance(dsProxy.address);
-            // console.log("dydx balance:", dydxBalance)
+            let dydxBalance = await getDydxBalance(dsProxy.address);
+            console.log("dydx balance:", dydxBalance)
             let tokenBalance, cTokenBalance 
             cTokenBalance  = await getInterestBearingTokenBalance(cpk.address, DAI_ENUM, COMPOUND_ENUM, {from: accounts[6]} )
             console.log("cDAI balance:", cTokenBalance)
@@ -277,15 +277,14 @@ contract('ProtocolProxy', function (accounts) {
     
         it('should be able to deposit DAI to Dydx', async function () {
             try {
-              let tx =  await deposit(DYDX_ENUM, DAI_ENUM ,web3.utils.toWei('0.001', 'ether'), {from:accounts[6]})
+              let tx =  await deposit(DYDX_ENUM, DAI_ENUM ,web3.utils.toWei('0.001', 'ether'), {from:accounts[7]})
 
-                let balance = await getDydxBalance(cpk.address)
+                // let balance = await getDydxBalance(cpk.address)
 
-                console.log("Dydx balance:", balance)
+                // console.log("Dydx balance:", balance)
 
             } catch(err) {
-                // assert.equal(1, 2, err)
-                console.log(err)
+                 assert.equal(1, 2, err)    
             }
         });
     });

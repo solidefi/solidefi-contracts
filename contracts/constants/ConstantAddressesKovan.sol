@@ -8,7 +8,7 @@ contract ConstantAddressesKovan {
     //kovan
     address public constant LOGGER_ADDRESS = 0x43fD99B873D48bf1845B3CD073fA53CA3eaAec56;
     address public constant SAVINGS_COMPOUND_ADDRESS = 0x83021914EcFaB9c1358c62aaa340644aBB372f84;
-    address public constant SAVINGS_DYDX_ADDRESS = 0x5B1C073103cdA71CcDb9Cf0D786EDd2D5A5aed8d;
+    address public constant SAVINGS_DYDX_ADDRESS = 0x2633bc318639DEb4504B9a3577384412140c8046;
     address public constant SAVINGS_AAVE_ADDRESS = 0x7604973aeDB53cC5b4b491A01D96a0ce5E3Ac9D6;
 
     // aave
@@ -19,7 +19,7 @@ contract ConstantAddressesKovan {
     address public constant AAVE_USDT_ADDRESS = 0x13512979ADE267AB5100878E2e0f485B568328a4;
     address public constant AAVE_AUSDT_ADDRESS = 0xA01bA9fB493b851F4Ac5093A324CB081A909C34B;
     //dydx
-    // address public constant SOLO_MARGIN_ADDRESS = 0x4EC3570cADaAEE08Ae384779B0f3A45EF85289DE;
+    address public constant SOLO_MARGIN_ADDRESS = 0x4EC3570cADaAEE08Ae384779B0f3A45EF85289DE;
     address public constant SAI_ADDRESS = 0xC4375B7De8af5a38a93548eb8453a498222C4fF2;
 
     //Compound

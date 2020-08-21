@@ -7,11 +7,10 @@ import "../interfaces/ERC20.sol";
 import "./dydx/ISoloMargin.sol";
 import "./Logger.sol";
 import "../constants/ConstantAddresses.sol";
-import "./dydx/DydxProtocol.sol";
 
 //import "../interfaces/ComptrollerInterface.sol";
 
-contract ProtocolProxy is ConstantAddresses, DydxProtocol {
+contract ProtocolProxy is ConstantAddresses {
     enum SavingsProtocol {Compound, Dydx, Aave}
 
     enum SavingsToken {DAI, USDC, USDT, TUSD}
@@ -97,6 +96,15 @@ contract ProtocolProxy is ConstantAddresses, DydxProtocol {
                 return (AAVE_USDT_ADDRESS, AAVE_AUSDT_ADDRESS);
             }
         }
+        if (_protocol == SavingsProtocol.Dydx) {
+            if (_coin == SavingsToken.DAI) {
+                return (SAI_ADDRESS, SAI_ADDRESS);
+            }
+
+            if (_coin == SavingsToken.USDC) {
+                return (SAI_ADDRESS, SAI_ADDRESS);
+            }
+        }
     }
 
     // Interest-Bearing Token
@@ -106,26 +114,9 @@ contract ProtocolProxy is ConstantAddresses, DydxProtocol {
         uint256 _amount
     ) internal {
         approveDeposit(_protocol, _coin);
+        (address TOKEN, address IBTOKEN) = getTokenAddress(_coin, _protocol);
 
-        if (_protocol == SavingsProtocol.Dydx) {
-            uint256 _inputMarketId;
-            if (_coin == SavingsToken.DAI) {
-                _inputMarketId = 3;
-            } else {
-                _inputMarketId = 2;
-            }
-            dydxDeposit(address(this), _amount, _inputMarketId);
-            endAction(_protocol);
-        } else {
-            (address TOKEN, address IBTOKEN) = getTokenAddress(_coin, _protocol);
-
-            ProtocolInterface(getAddress(_protocol)).deposit(
-                address(this),
-                _amount,
-                TOKEN,
-                IBTOKEN
-            );
-        }
+        ProtocolInterface(getAddress(_protocol)).deposit(address(this), _amount, TOKEN, IBTOKEN);
     }
 
     function _withdraw(
@@ -134,24 +125,9 @@ contract ProtocolProxy is ConstantAddresses, DydxProtocol {
         uint256 _amount
     ) internal {
         approveWithdraw(_protocol, _coin);
-        if (_protocol == SavingsProtocol.Dydx) {
-            uint256 _inputMarketId;
-            if (_coin == SavingsToken.DAI) {
-                _inputMarketId = 1;
-            } else {
-                _inputMarketId = 2;
-            }
-            dydxWithdraw(address(this), _amount, _inputMarketId);
-            endAction(_protocol);
-        } else {
-            (address TOKEN, address IBTOKEN) = getTokenAddress(_coin, _protocol);
-            ProtocolInterface(getAddress(_protocol)).withdraw(
-                address(this),
-                _amount,
-                TOKEN,
-                IBTOKEN
-            );
-        }
+
+        (address TOKEN, address IBTOKEN) = getTokenAddress(_coin, _protocol);
+        ProtocolInterface(getAddress(_protocol)).withdraw(address(this), _amount, TOKEN, IBTOKEN);
     }
 
     function swap(

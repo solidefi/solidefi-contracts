@@ -6,12 +6,12 @@ const ProxySmartPool = artifacts.require("./ProxySmartPool.sol");
 require('dotenv').config();
 
  module.exports = function (deployer, network, accounts) {
-    let deployAgain = (process.env.DEPLOY_AGAIN === 'true') ? true : false;
+    // let deployAgain = (process.env.DEPLOY_AGAIN === 'true') ? true : false;
 
-    deployer.then(async () => {
-      //   await deployer.deploy(BasicSmartPool, { gas: 4000000 })
-       await deployer.deploy(ProxySmartPool, { gas: 4000000 })
-    });
+    // deployer.then(async () => {
+    //   //   await deployer.deploy(BasicSmartPool, { gas: 4000000 })
+    //    await deployer.deploy(ProxySmartPool, { gas: 4000000 })
+    // });
  };
 
 

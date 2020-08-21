@@ -23,20 +23,23 @@
 pragma solidity >=0.6.0;
 pragma experimental ABIEncoderV2;
 
+import "../ProtocolInterface.sol";
 import "./ISoloMargin.sol";
 import "../../interfaces/ERC20.sol";
 
-contract DydxProtocol {
+contract DydxProtocol is ProtocolInterface {
     //kovan
     address public constant SOLO_MARGIN_ADDRESS = 0x4EC3570cADaAEE08Ae384779B0f3A45EF85289DE;
+    address public constant SAI_ADDRESS = 0xC4375B7De8af5a38a93548eb8453a498222C4fF2;
+    address public USDC_ADDRESS = 0xC4375B7De8af5a38a93548eb8453a498222C4fF2;
+
     //mainnet
     //address public constant SOLO_MARGIN_ADDRESS = 0x1E0447b19BB6EcFdAe1e4AE1694b0C3659614e4e;
 
     ISoloMargin public soloMargin;
-    address public protocolProxy;
 
     // kovan saiMarketId = 1
-    //uint256 daiMarketId = 1;
+    uint256 marketId;
 
     // //mainnet
     // uint256 daiMarketId = 3;
@@ -46,12 +49,18 @@ contract DydxProtocol {
         soloMargin = ISoloMargin(SOLO_MARGIN_ADDRESS);
     }
 
-    function dydxDeposit(
+    function deposit(
         address _user,
         uint256 _amount,
-        uint256 _inputMarketId
-    ) public {
+        address _token,
+        address _cToken
+    ) public override {
         require(msg.sender == _user);
+        if (_token == SAI_ADDRESS) {
+            marketId = 1;
+        } else if (_token == USDC_ADDRESS) {
+            marketId = 2;
+        }
         Account.Info[] memory accounts = new Account.Info[](1);
         accounts[0] = getAccount(_user, 0);
 
@@ -67,7 +76,7 @@ contract DydxProtocol {
             actionType: Actions.ActionType.Deposit,
             accountId: 0,
             amount: amount,
-            primaryMarketId: _inputMarketId,
+            primaryMarketId: marketId,
             otherAddress: _user,
             secondaryMarketId: 0, //not used
             otherAccountId: 0, //not used
@@ -77,13 +86,18 @@ contract DydxProtocol {
         soloMargin.operate(accounts, actions);
     }
 
-    function dydxWithdraw(
+    function withdraw(
         address _user,
         uint256 _amount,
-        uint256 _inputMarketId
-    ) public {
+        address _token,
+        address _cToken
+    ) public override {
         require(msg.sender == _user);
-
+        if (_token == SAI_ADDRESS) {
+            marketId = 1;
+        } else if (_token == USDC_ADDRESS) {
+            marketId = 2;
+        }
         Account.Info[] memory accounts = new Account.Info[](1);
         accounts[0] = getAccount(_user, 0);
 
@@ -99,7 +113,7 @@ contract DydxProtocol {
             actionType: Actions.ActionType.Withdraw,
             accountId: 0,
             amount: amount,
-            primaryMarketId: _inputMarketId,
+            primaryMarketId: marketId,
             otherAddress: _user,
             secondaryMarketId: 0, //not used
             otherAccountId: 0, //not used
