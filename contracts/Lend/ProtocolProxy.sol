@@ -8,8 +8,10 @@ import "./dydx/ISoloMargin.sol";
 import "./Logger.sol";
 import "../constants/ConstantAddresses.sol";
 
-//import "../interfaces/ComptrollerInterface.sol";
-
+/**
+ * @notice ProtocolProxy
+ * @author Solidefi
+ */
 contract ProtocolProxy is ConstantAddresses {
     enum SavingsProtocol {Compound, Dydx, Aave}
 
@@ -22,7 +24,13 @@ contract ProtocolProxy is ConstantAddresses {
     ) public {
         _deposit(_protocol, _coin, _amount);
 
-        Logger(LOGGER_ADDRESS).logDeposit(msg.sender, uint8(_protocol), _amount, uint256(now));
+        Logger(LOGGER_ADDRESS).logDeposit(
+            msg.sender,
+            uint8(_protocol),
+            uint8(_coin),
+            _amount,
+            uint256(now)
+        );
     }
 
     function withdraw(
@@ -32,7 +40,13 @@ contract ProtocolProxy is ConstantAddresses {
     ) public {
         _withdraw(_protocol, _coin, _amount);
 
-        Logger(LOGGER_ADDRESS).logWithdraw(msg.sender, uint8(_protocol), _amount, uint256(now));
+        Logger(LOGGER_ADDRESS).logWithdraw(
+            msg.sender,
+            uint8(_protocol),
+            uint8(_coin),
+            _amount,
+            uint256(now)
+        );
     }
 
     function getAddress(SavingsProtocol _protocol) public pure returns (address) {
@@ -50,60 +64,17 @@ contract ProtocolProxy is ConstantAddresses {
     }
 
     // mainnet
-    // function getTokenAddress(SavingsToken _coin) public pure returns (address, address) {
-    //     if (_coin == SavingsToken.DAI) {
-    //         return (DAI_ADDRESS, CDAI_ADDRESS);
-    //     }
-
-    //     if (_coin == SavingsToken.USDC) {
-    //         return (USDC_ADDRESS, CUSDC_ADDRESS);
-    //     }
-
-    //     if (_coin == SavingsToken.USDT) {
-    //         return (USDT_ADDRESS, USDT_ADDRESS);
-    //     }
-    // }
-
-    //kovan
-    function getTokenAddress(SavingsToken _coin, SavingsProtocol _protocol)
-        public
-        pure
-        returns (address, address)
-    {
-        if (_protocol == SavingsProtocol.Compound) {
-            if (_coin == SavingsToken.DAI) {
-                return (DAI_ADDRESS, CDAI_ADDRESS);
-            }
-
-            if (_coin == SavingsToken.USDC) {
-                return (USDC_ADDRESS, CUSDC_ADDRESS);
-            }
-
-            if (_coin == SavingsToken.USDT) {
-                return (USDT_ADDRESS, CUSDT_ADDRESS);
-            }
+    function getTokenAddress(SavingsToken _coin) public pure returns (address, address) {
+        if (_coin == SavingsToken.DAI) {
+            return (DAI_ADDRESS, CDAI_ADDRESS);
         }
-        if (_protocol == SavingsProtocol.Aave) {
-            if (_coin == SavingsToken.DAI) {
-                return (AAVE_DAI_ADDRESS, ADAI_ADDRESS);
-            }
 
-            if (_coin == SavingsToken.USDC) {
-                return (AAVE_USDC_ADDRESS, AAVE_AUSDC_ADDRESS);
-            }
-
-            if (_coin == SavingsToken.USDT) {
-                return (AAVE_USDT_ADDRESS, AAVE_AUSDT_ADDRESS);
-            }
+        if (_coin == SavingsToken.USDC) {
+            return (USDC_ADDRESS, CUSDC_ADDRESS);
         }
-        if (_protocol == SavingsProtocol.Dydx) {
-            if (_coin == SavingsToken.DAI) {
-                return (SAI_ADDRESS, SAI_ADDRESS);
-            }
 
-            if (_coin == SavingsToken.USDC) {
-                return (SAI_ADDRESS, SAI_ADDRESS);
-            }
+        if (_coin == SavingsToken.USDT) {
+            return (USDT_ADDRESS, CUSDT_ADDRESS);
         }
     }
 
@@ -114,7 +85,7 @@ contract ProtocolProxy is ConstantAddresses {
         uint256 _amount
     ) internal {
         approveDeposit(_protocol, _coin);
-        (address TOKEN, address IBTOKEN) = getTokenAddress(_coin, _protocol);
+        (address TOKEN, address IBTOKEN) = getTokenAddress(_coin);
 
         ProtocolInterface(getAddress(_protocol)).deposit(address(this), _amount, TOKEN, IBTOKEN);
     }
@@ -126,7 +97,7 @@ contract ProtocolProxy is ConstantAddresses {
     ) internal {
         approveWithdraw(_protocol, _coin);
 
-        (address TOKEN, address IBTOKEN) = getTokenAddress(_coin, _protocol);
+        (address TOKEN, address IBTOKEN) = getTokenAddress(_coin);
         ProtocolInterface(getAddress(_protocol)).withdraw(address(this), _amount, TOKEN, IBTOKEN);
     }
 
@@ -136,7 +107,7 @@ contract ProtocolProxy is ConstantAddresses {
         uint256 _amount,
         SavingsToken _coin
     ) public {
-        (address TOKEN, ) = getTokenAddress(_coin, _from);
+        (address TOKEN, ) = getTokenAddress(_coin);
         _withdraw(_from, _coin, _amount);
 
         uint256 amountToDeposit = ERC20(TOKEN).balanceOf(address(this));
@@ -153,34 +124,25 @@ contract ProtocolProxy is ConstantAddresses {
     }
 
     function approveDeposit(SavingsProtocol _protocol, SavingsToken _coin) internal {
-        // kovan
-        (address TOKEN, ) = getTokenAddress(_coin, _protocol);
-        if (_protocol == SavingsProtocol.Compound) {
+        (address TOKEN, ) = getTokenAddress(_coin);
+        if (_protocol == SavingsProtocol.Compound || _protocol == SavingsProtocol.Aave) {
             ERC20(TOKEN).approve(getAddress(_protocol), uint256(-1));
         }
 
         if (_protocol == SavingsProtocol.Dydx) {
-            ERC20(SAI_ADDRESS).approve(SOLO_MARGIN_ADDRESS, uint256(-1));
+            ERC20(TOKEN).approve(SOLO_MARGIN_ADDRESS, uint256(-1));
             setDydxOperator(true);
-        }
-
-        if (_protocol == SavingsProtocol.Aave) {
-            ERC20(TOKEN).approve(getAddress(_protocol), uint256(-1));
         }
     }
 
     function approveWithdraw(SavingsProtocol _protocol, SavingsToken _coin) internal {
-        (, address IBTOKEN) = getTokenAddress(_coin, _protocol);
-        if (_protocol == SavingsProtocol.Compound) {
+        (, address IBTOKEN) = getTokenAddress(_coin);
+        if (_protocol == SavingsProtocol.Compound || _protocol == SavingsProtocol.Aave) {
             ERC20(IBTOKEN).approve(getAddress(_protocol), uint256(-1));
         }
 
         if (_protocol == SavingsProtocol.Dydx) {
             setDydxOperator(true);
-        }
-
-        if (_protocol == SavingsProtocol.Aave) {
-            ERC20(IBTOKEN).approve(getAddress(_protocol), uint256(-1));
         }
     }
 

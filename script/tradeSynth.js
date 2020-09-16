@@ -1,5 +1,5 @@
 const path = require("path");
-const dotenv = require('dotenv').config();
+const dotenv = require('dotenv').config({path:'/Users/surbhiaudichya/Documents/solidefi-contracts/.env'});
 const synthetix = require('synthetix');
 const CPK = require('contract-proxy-kit')
 const Web3 = require('web3');
@@ -26,9 +26,9 @@ trading = (async () => {
   const sUSDContract = new web3.eth.Contract(abiSynthetix,addressSUSD);
   // const dai = new web3.eth.Contract(ERC20JSON.abi, DAI);
   const value = 0.001*1e18;
-  
- 
-  exchangeForSynth(value, cpk.address, async(error, data) => { 
+  const fromSymbol = DAI;
+ const toSymbol = sUSD;
+  exchangeForSynth(fromSymbol,toSymbol,value, cpk.address, async(error, data) => { 
    
      if (error) {
       return console.log(error) 
@@ -50,6 +50,7 @@ trading = (async () => {
         }
         console.log("sXAG",await Synthetix.methods.isWaitingPeriod(toBytes32('sXAG')).call());
         console.log("sXAU",await Synthetix.methods.isWaitingPeriod(toBytes32('sXAU')).call());
+        console.log(cpk.address);
      const { promiEvent, hash } = await cpk.execTransactions([
        {
          operation: CPK.CALL,
@@ -63,16 +64,54 @@ trading = (async () => {
         value: 0,                           
         data: Synthetix.methods.exchange(toBytes32('sUSD'), web3.utils.toHex(data.sUSDAmount), toBytes32('sXAU')).encodeABI(),
        },
-      ],{gasLimit: 999990});
-      
+      ],{gasLimit: 999990});    
       console.log(hash);
-    }  catch (err) {
-      console.log('Synthetix token Error', err);
     }  
-    })
+    catch (err) {
+      console.log('Synthetix token Error', err);
+    } 
+
+    });
   } catch (err) {
     console.log('Error', err);
   }
+})();
+
+sell = (async () => {
+  // sell sXAU for DAI
+  // exchange sXAU for sUSD
+  // 1inch sUSD for DAI 
+  try {
+    const cpk = await CPK.create({ web3 , ownerAccount:account.address});
+    const sXAUamount = 0.000001*1e18;
+    const sUSDvalue = 0.001*1e18; //sUSD value this should be equal to what we got after exchanging sXAU for sUSD
+    const fromSymbol = sUSD;
+    const toSymbol = DAI;
+    sellSynth(sXAUamount, cpk.address, async(error, res) => { 
+       
+      
+      exchangeForSynth('sUSD','DAI',res.sUSDvalue, cpk.address, async(error, data) => { 
+        const { hash } = await cpk.execTransactions([     
+          {
+            operation: CPK.CALL,
+            to: data.to,
+            value: 0,                           
+            data: data.calldata,
+          },
+          
+         ],{gasLimit: 999990});    
+         console.log(hash);
+    
+      });
+        
+    });
+    
+    
+
+  } catch(err){
+    console.log(err);
+  }
+
 })();
 
 /**

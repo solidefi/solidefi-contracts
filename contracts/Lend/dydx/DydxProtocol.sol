@@ -28,22 +28,15 @@ import "./ISoloMargin.sol";
 import "../../interfaces/ERC20.sol";
 
 contract DydxProtocol is ProtocolInterface {
-    //kovan
-    address public constant SOLO_MARGIN_ADDRESS = 0x4EC3570cADaAEE08Ae384779B0f3A45EF85289DE;
-    address public constant SAI_ADDRESS = 0xC4375B7De8af5a38a93548eb8453a498222C4fF2;
-    address public USDC_ADDRESS = 0xC4375B7De8af5a38a93548eb8453a498222C4fF2;
-
     //mainnet
-    //address public constant SOLO_MARGIN_ADDRESS = 0x1E0447b19BB6EcFdAe1e4AE1694b0C3659614e4e;
+    address public constant SOLO_MARGIN_ADDRESS = 0x1E0447b19BB6EcFdAe1e4AE1694b0C3659614e4e;
+    address public constant DAI_ADDRESS = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+    address public constant USDC_ADDRESS = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
+    address public constant CDAI_ADDRESS = 0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643;
 
     ISoloMargin public soloMargin;
 
-    // kovan saiMarketId = 1
     uint256 marketId;
-
-    // //mainnet
-    // uint256 daiMarketId = 3;
-    // uint256 usdcMarketId = 2;
 
     constructor() public {
         soloMargin = ISoloMargin(SOLO_MARGIN_ADDRESS);
@@ -56,11 +49,12 @@ contract DydxProtocol is ProtocolInterface {
         address _cToken
     ) public override {
         require(msg.sender == _user);
-        if (_token == SAI_ADDRESS) {
-            marketId = 1;
+        if (_token == DAI_ADDRESS) {
+            marketId = 3;
         } else if (_token == USDC_ADDRESS) {
             marketId = 2;
         }
+        _cToken == CDAI_ADDRESS;
         Account.Info[] memory accounts = new Account.Info[](1);
         accounts[0] = getAccount(_user, 0);
 
@@ -93,11 +87,13 @@ contract DydxProtocol is ProtocolInterface {
         address _cToken
     ) public override {
         require(msg.sender == _user);
-        if (_token == SAI_ADDRESS) {
-            marketId = 1;
+        _cToken = DAI_ADDRESS;
+        if (_token == DAI_ADDRESS) {
+            marketId = 3;
         } else if (_token == USDC_ADDRESS) {
             marketId = 2;
         }
+        _cToken == CDAI_ADDRESS;
         Account.Info[] memory accounts = new Account.Info[](1);
         accounts[0] = getAccount(_user, 0);
 

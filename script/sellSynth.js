@@ -1,7 +1,15 @@
 const request = require('request')
-const exchangeForSynth = (fromSymbol, toSymbol,value, userAddress, callback) => {
+const sellSynth = (value, userAddress, callback) => {
+    const { hash } = await cpk.execTransactions([{
+        operation: CPK.CALL,
+        to: Synthetix.options.address,
+        value: 0,                           
+        data: Synthetix.methods.exchange(toBytes32('sUSD'), web3.utils.toHex(value), toBytes32('sXAU')).encodeABI(),
+       },
+      ],{gasLimit: 999990});    
+    console.log(hash);
 
-const url ='https://api.1inch.exchange/v1.1/swapQuote?fromTokenSymbol='+ fromSymbol +'&toTokenSymbol='+ toSymbol +'&amount=' + value + '&fromAddress=' + userAddress + '&slippage=1&disableEstimate=true'
+
 
 request({ url: url, json: true }, (error, response) => { 
     if (error) {
@@ -14,4 +22,4 @@ request({ url: url, json: true }, (error, response) => {
 calldata: response.body.data, to: response.body.to, sUSDAmount: response.body.toTokenAmount
 }) }
 }) }
-module.exports = exchangeForSynth
+module.exports = sellSynth

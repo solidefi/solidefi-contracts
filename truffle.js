@@ -3,7 +3,7 @@ const path = require("path");
 const dotenv = require('dotenv').config();
 const HDWalletProvider = require('truffle-hdwallet-provider');
 
-const mnemonic = process.env.ETHEREUM_ACCOUNT_MNEMONIC;
+const mnemonic = process.env.MNEMONIC;
 
 module.exports = {
     api_keys: {
@@ -16,11 +16,11 @@ module.exports = {
     networks: {
         mainnet: {
             provider: function () {
-                return new HDWalletProvider(mnemonic, process.env.MAINNET_INFURA_ENDPOINT);
+                return new HDWalletProvider(mnemonic, process.env.MAINNET_INFURA_ENDPOINT, 1);
             },
             network_id: '1',
-            gasPrice: 36000000000, // 33 gwei
-            skipDryRun: true,
+            gasPrice: 118000000000, // 33 gwei
+            skipDryRun: false,
         },
         kovan: {
             provider: function () {
@@ -28,7 +28,7 @@ module.exports = {
             },
             network_id: '42',
             gas: 8000000,
-            gasPrice: 3000000000,
+            gasPrice: 4000000000,
             skipDryRun: true,
         },
         rinkeby: {
@@ -58,6 +58,7 @@ module.exports = {
                     enabled: true,
                     runs: 200
                 },
+                evmVersion:"istanbul"
             }
         }
     }
