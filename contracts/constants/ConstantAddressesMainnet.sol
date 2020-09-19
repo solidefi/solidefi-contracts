@@ -5,8 +5,8 @@ contract ConstantAddressesMainnet {
     // mainnet
     address public constant LOGGER_ADDRESS = 0x0d64909AAc6Fc1B39184100c7D07adbD4AD6B905;
     address public constant SAVINGS_COMPOUND_ADDRESS = 0x350ae46a6FDC97A27c1B0A00fDB24637A6ff1a3B;
-    address public constant SAVINGS_DYDX_ADDRESS = 0xDdF1A04558Db0373C3b49B1C3dD10b81F4534D25;
-    address public constant SAVINGS_AAVE_ADDRESS = 0x6f9A0508217ef535730c20fB159BF9a982E668ab;
+    address public constant SAVINGS_DYDX_ADDRESS = 0x2a4D374aaBBC6A1c45FDf022B9eC4Fe4492C1EEB;
+    address public constant SAVINGS_AAVE_ADDRESS = 0x72b2f78b9EeCf740d7Bf81AeaB315e48BAfEC994;
     // constant mainnet
     address public constant DAI_ADDRESS = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
     address public constant ADAI_ADDRESS = 0xfC1E690f61EFd961294b3e1Ce3313fBD8aa4f85d;

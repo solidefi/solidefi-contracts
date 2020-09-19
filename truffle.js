@@ -16,19 +16,19 @@ module.exports = {
     networks: {
         mainnet: {
             provider: function () {
-                return new HDWalletProvider(mnemonic, process.env.MAINNET_INFURA_ENDPOINT, 1);
+                return new HDWalletProvider(mnemonic, process.env.MAINNET_INFURA_ENDPOINT, 0);
             },
             network_id: '1',
-            gasPrice: 118000000000, // 33 gwei
+            gasPrice: 110000000000, // 33 gwei
             skipDryRun: false,
         },
         kovan: {
             provider: function () {
-                return new HDWalletProvider(mnemonic, process.env.KOVAN_INFURA_ENDPOINT, 0, 15);
+                return new HDWalletProvider(mnemonic, process.env.KOVAN_INFURA_ENDPOINT, 1, 15);
             },
             network_id: '42',
             gas: 8000000,
-            gasPrice: 4000000000,
+            gasPrice: 110000000000,
             skipDryRun: true,
         },
         rinkeby: {
@@ -56,7 +56,7 @@ module.exports = {
             settings: {
                 optimizer: {
                     enabled: true,
-                    runs: 200
+                    runs: 20000
                 },
                 evmVersion:"istanbul"
             }
